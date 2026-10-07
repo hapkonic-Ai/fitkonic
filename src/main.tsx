@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { App } from '@/app/App';
 import './index.css';
 
-// Force immediate update of any older cached PWA Service Worker & delete legacy IndexedDB versions
+// Clean up legacy IndexedDB versions and ensure offline Service Worker is registered silently
 if (typeof window !== 'undefined') {
   if ('indexedDB' in window && typeof window.indexedDB.deleteDatabase === 'function') {
     [
@@ -13,6 +13,7 @@ if (typeof window !== 'undefined') {
       'fitkonic_offline_db_v2',
       'fitkonic_offline_db_v3',
       'fitkonic_offline_db_v4_clean',
+      'fitkonic_offline_db_v5_clean',
     ].forEach((oldDbName) => {
       try {
         window.indexedDB.deleteDatabase(oldDbName);
@@ -23,17 +24,17 @@ if (typeof window !== 'undefined') {
   }
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      for (const reg of registrations) {
-        void reg.update();
-      }
-    });
-
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (refreshing) return;
-      refreshing = true;
-      window.location.reload();
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('/sw.js', { scope: '/' })
+        .then((reg) => {
+          if (navigator.onLine) {
+            void reg.update().catch(() => {});
+          }
+        })
+        .catch(() => {
+          // Silent in dev or offline
+        });
     });
   }
 }
@@ -41,8 +42,13 @@ if (typeof window !== 'undefined') {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,
-      retry: 1,
+      staleTime: 1000 * 60 * 60 * 24,
+      gcTime: 1000 * 60 * 60 * 24 * 7,
+      retry: false,
+      networkMode: 'always',
+    },
+    mutations: {
+      networkMode: 'always',
     },
   },
 });

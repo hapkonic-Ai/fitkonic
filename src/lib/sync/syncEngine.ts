@@ -311,19 +311,21 @@ class FitkonicSyncEngine {
         this.lastSyncedAt = new Date().toISOString();
         this.lastError = null;
       }
-    } catch (err) {
-      this.syncStatus = 'failed';
-      this.lastError = err instanceof Error ? err.message : 'Sync failed';
+    } catch {
+      // Offline-first: never surface internet/network errors to the user.
+      // Keep items safely in the local IndexedDB outbox queue as 'pending' to sync when connectivity returns.
+      this.syncStatus = 'pending';
+      this.isServerReachable = false;
+      this.lastError = null;
       for (const item of queueItems) {
         await db.sync_queue.update(item.id, {
-          status: 'failed',
+          status: 'pending',
           retryCount: item.retryCount + 1,
-          lastError: this.lastError,
         });
         const table = this.getTableForEntity(item.entity);
         if (table && item.operation === 'upsert') {
           await table.update(item.recordId, {
-            _syncStatus: 'failed',
+            _syncStatus: 'pending',
           } as never);
         }
       }

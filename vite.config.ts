@@ -159,6 +159,7 @@ export default defineConfig({
     neonApiPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: 'inline',
       includeAssets: ['favicon.svg', 'icons/icon-192.svg', 'icons/icon-512.svg', 'icons/icon-maskable.svg'],
       manifest: {
         name: 'FITKONIC — Discipline Today. A Stronger Tomorrow.',
