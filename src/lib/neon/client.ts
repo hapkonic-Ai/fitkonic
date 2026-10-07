@@ -37,7 +37,9 @@ export function getNeonDirectClient() {
   }
 }
 
-async function ensureNeonSyncStoreTable(sql: ReturnType<typeof neon>) {
+async function ensureNeonSyncStoreTable(
+  sql: NonNullable<ReturnType<typeof getNeonDirectClient>>
+) {
   if (tableInitialized) return;
   await sql`
     CREATE TABLE IF NOT EXISTS fitkonic_sync_store (
