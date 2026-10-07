@@ -1,0 +1,11 @@
+{
+  "framework": "vite",
+  "buildCommand": "pnpm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/((?!assets/|themes/|icons/|manifest\\.webmanifest|sw\\.js|workbox-.*\\.js).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

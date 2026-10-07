@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ssSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#160B1E"/>
+      <stop offset="40%" stop-color="#451A1C"/>
+      <stop offset="72%" stop-color="#9A3412"/>
+      <stop offset="100%" stop-color="#07090C"/>
+    </linearGradient>
+    <radialGradient id="ssSun" cx="62%" cy="46%" r="32%">
+      <stop offset="0%" stop-color="#FDE68A" stop-opacity="0.85"/>
+      <stop offset="35%" stop-color="#F59E0B" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#9A3412" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="720" fill="url(#ssSky)"/>
+  <rect width="1200" height="720" fill="url(#ssSun)"/>
+  <circle cx="744" cy="330" r="95" fill="#FBBF24" opacity="0.55"/>
+  <!-- Coastal headlands -->
+  <polygon points="0,470 280,360 540,445 880,410 1200,460 1200,720 0,720" fill="#181014"/>
+  <!-- Ocean horizon reflection lines -->
+  <g stroke="#F59E0B" stroke-opacity="0.45" stroke-width="3" stroke-linecap="round">
+    <line x1="650" y1="455" x2="835" y2="455"/>
+    <line x1="670" y1="472" x2="815" y2="472"/>
+    <line x1="690" y1="490" x2="795" y2="490"/>
+  </g>
+  <!-- Foreground dark silhouette -->
+  <polygon points="0,540 420,485 1200,535 1200,720 0,720" fill="#07090C"/>
+</svg>

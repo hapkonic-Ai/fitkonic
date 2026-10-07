@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ppBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07080A"/>
+      <stop offset="50%" stop-color="#1A0B0E"/>
+      <stop offset="100%" stop-color="#07090C"/>
+    </linearGradient>
+    <radialGradient id="ppRedGlow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#EF4444" stop-opacity="0.34"/>
+      <stop offset="65%" stop-color="#7F1D1D" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#07090C" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="720" fill="url(#ppBg)"/>
+  <rect width="1200" height="720" fill="url(#ppRedGlow)"/>
+  <!-- Industrial Power Rack & Barbell Silhouette -->
+  <g stroke="#27272A" stroke-width="14" opacity="0.65">
+    <line x1="260" y1="60" x2="260" y2="680"/>
+    <line x1="940" y1="60" x2="940" y2="680"/>
+    <line x1="120" y1="340" x2="1080" y2="340" stroke="#52525B" stroke-width="10"/>
+  </g>
+  <!-- Competition Calibrated Plates -->
+  <g fill="#18181B" stroke="#EF4444" stroke-width="4" opacity="0.8">
+    <rect x="175" y="210" width="28" height="260" rx="6"/>
+    <rect x="210" y="225" width="24" height="230" rx="5"/>
+    <rect x="966" y="225" width="24" height="230" rx="5"/>
+    <rect x="997" y="210" width="28" height="260" rx="6"/>
+  </g>
+</svg>

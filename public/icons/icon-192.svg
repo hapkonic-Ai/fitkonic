@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192" fill="none">
+  <rect width="192" height="192" rx="40" fill="#07090C"/>
+  <rect x="4" y="4" width="184" height="184" rx="36" stroke="#202A35" stroke-width="2"/>
+  <defs>
+    <linearGradient id="fkWing" x1="40" y1="36" x2="152" y2="156" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F5F7FA"/>
+      <stop offset="55%" stop-color="#7DD3FC"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+  <!-- Geometric Forward Motion F / Wing Symbol matching Fitkonic brand mark -->
+  <path d="M54 148L78 44H146L134 72H98L93 92H128L118 118H86L78 148H54Z" fill="url(#fkWing)"/>
+  <path d="M42 126L68 44L56 126H42Z" fill="#5EC8FF" opacity="0.85"/>
+</svg>

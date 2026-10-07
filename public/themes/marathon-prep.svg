@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="mpSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#05130D"/>
+      <stop offset="50%" stop-color="#0D281D"/>
+      <stop offset="100%" stop-color="#07090C"/>
+    </linearGradient>
+    <radialGradient id="mpGlow" cx="50%" cy="42%" r="48%">
+      <stop offset="0%" stop-color="#22C55E" stop-opacity="0.28"/>
+      <stop offset="60%" stop-color="#10B981" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#07090C" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="720" fill="url(#mpSky)"/>
+  <rect width="1200" height="720" fill="url(#mpGlow)"/>
+  <!-- Distant mountain range -->
+  <polygon points="0,420 240,290 480,380 600,320 760,385 980,270 1200,390 1200,720 0,720" fill="#0B1914"/>
+  <!-- Endless perspective road -->
+  <polygon points="575,380 625,380 960,720 240,720" fill="#111820"/>
+  <line x1="600" y1="385" x2="600" y2="720" stroke="#22C55E" stroke-width="5" stroke-dasharray="28 22" opacity="0.75"/>
+</svg>
