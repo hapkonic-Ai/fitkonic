@@ -285,7 +285,7 @@ export function HomeDashboard() {
                     backgroundColor: `${accentColor}18`,
                   }}
                 >
-                  Harsh • Pranav • Kavi
+                  Harsh • Pranav • Kavi • Vijay
                 </span>
               </div>
 

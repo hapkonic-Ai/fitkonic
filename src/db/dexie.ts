@@ -29,7 +29,7 @@ export class FitkonicDexieDB extends Dexie {
   sync_queue!: Table<SyncQueueItem, string>;
 
   constructor() {
-    super('fitkonic_offline_db_v2');
+    super('fitkonic_offline_db_v3');
 
     this.version(1).stores({
       profiles: 'id, email, username, _syncStatus',

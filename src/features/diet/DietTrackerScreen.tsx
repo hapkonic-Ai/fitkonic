@@ -74,7 +74,7 @@ export function DietTrackerScreen() {
       queryChallengeDietLogsWithRLS(cid, uid, dateStr),
     ]);
 
-    const squadOrder = ['user-harsh', 'user-pranav', 'user-kavi'];
+    const squadOrder = ['user-harsh', 'user-pranav', 'user-kavi', 'user-vijay'];
     const orderedProfiles = [...profiles].sort((a, b) => {
       const ia = squadOrder.indexOf(a.id);
       const ib = squadOrder.indexOf(b.id);
@@ -346,18 +346,18 @@ export function DietTrackerScreen() {
         </div>
       </div>
 
-      {/* Squad Food Accountability: See What Harsh, Pranav & Kavi Ate Today */}
+      {/* Squad Food Accountability: See What Harsh, Pranav, Kavi & Vijay Ate Today */}
       <div className="rounded-2xl border border-[#202A35] bg-[#0D1117] p-5 space-y-4">
         <div>
           <span className="text-[11px] font-display uppercase tracking-widest text-[#5EC8FF] block">
             SQUAD ACCOUNTABILITY
           </span>
           <h2 className="text-base font-display font-bold text-[#F5F7FA]">
-            What Harsh, Pranav &amp; Kavi Ate Today
+            What Harsh, Pranav, Kavi &amp; Vijay Ate Today
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {data.profiles.map((member) => {
             const memberMeals = data.visibleChallengeLogs.filter(
               (l) => l.user_id === member.id

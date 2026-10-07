@@ -88,9 +88,14 @@ test.describe('FITKONIC — Simplified 3-User (Harsh, Pranav, Kavi) E2E & Offlin
     await expect(page.getByTestId('lift-card-ex-bench-press')).toContainText('45 kg');
     await expect(page.getByTestId('lift-card-ex-bench-press')).toContainText('55 kg');
 
+    // Switch to Vijay and verify his lifting weight progress (52.5 kg -> 62.5 kg)
+    await page.getByTestId('progress-user-vijay').click();
+    await expect(page.getByTestId('lift-card-ex-bench-press')).toContainText('52.5 kg');
+    await expect(page.getByTestId('lift-card-ex-bench-press')).toContainText('62.5 kg');
+
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'qa_desktop_progress.png') });
 
-    // Log out and verify the 3-login selector (Harsh, Pranav, Kavi) on LoginScreen
+    // Log out and verify the 4-login selector (Harsh, Pranav, Kavi, Vijay) on LoginScreen
     await page.getByTestId('desktop-nav-profile').click();
     await page.getByTestId('open-settings-button').click();
     await page.getByTestId('logout-button').click();
@@ -99,6 +104,7 @@ test.describe('FITKONIC — Simplified 3-User (Harsh, Pranav, Kavi) E2E & Offlin
     await expect(page.getByTestId('demo-login-harsh')).toBeVisible();
     await expect(page.getByTestId('demo-login-pranav')).toBeVisible();
     await expect(page.getByTestId('demo-login-kavi')).toBeVisible();
+    await expect(page.getByTestId('demo-login-vijay')).toBeVisible();
     await page.screenshot({ path: path.join(ARTIFACT_DIR, 'qa_login_splash.png') });
   });
 });

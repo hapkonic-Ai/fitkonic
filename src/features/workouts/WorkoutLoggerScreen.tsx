@@ -70,7 +70,7 @@ export function WorkoutLoggerScreen() {
       }
     }
 
-    const squadOrder = ['user-harsh', 'user-pranav', 'user-kavi'];
+    const squadOrder = ['user-harsh', 'user-pranav', 'user-kavi', 'user-vijay'];
     const orderedProfiles = [...profiles].sort((a, b) => {
       const ia = squadOrder.indexOf(a.id);
       const ib = squadOrder.indexOf(b.id);

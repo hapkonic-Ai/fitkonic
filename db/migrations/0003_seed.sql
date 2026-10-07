@@ -8,7 +8,8 @@ INSERT INTO profiles (id, email, display_name, username, bio, height, weight, bo
 VALUES
   ('11111111-1111-4111-8111-111111111101', 'harsh@fitkonic.app', 'Harsh', 'harsh', 'Focusing on steady lifting strength increases and body weight progress.', 180, 82.0, 16.0, 'Build Strength & Lean Mass', 'Strength Training'),
   ('11111111-1111-4111-8111-111111111102', 'pranav@fitkonic.app', 'Pranav', 'pranav', 'Progressive overload on compound lifts every week.', 178, 76.5, 15.0, 'Progressive Overload', 'Strength Training'),
-  ('11111111-1111-4111-8111-111111111103', 'kavi@fitkonic.app', 'Kavi', 'kavi', 'Consistent daily workouts, simple clean meals, heavier lifts.', 175, 73.0, 14.5, 'Strength & Conditioning', 'Strength Training')
+  ('11111111-1111-4111-8111-111111111103', 'kavi@fitkonic.app', 'Kavi', 'kavi', 'Consistent daily workouts, simple clean meals, heavier lifts.', 175, 73.0, 14.5, 'Strength & Conditioning', 'Strength Training'),
+  ('11111111-1111-4111-8111-111111111104', 'vijay@fitkonic.app', 'Vijay', 'vijay', 'Heavy compound lifts and daily discipline.', 179, 78.0, 15.5, 'Strength & Power', 'Strength Training')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO challenges (

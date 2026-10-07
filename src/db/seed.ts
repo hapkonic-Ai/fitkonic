@@ -22,7 +22,7 @@ function createAvatarSvgDataUrl(initials: string, bg1: string, bg2: string): str
 }
 
 /**
- * THE 3 ATHLETE LOGINS: HARSH, PRANAV, KAVI
+ * THE 4 ATHLETE LOGINS: HARSH, PRANAV, KAVI, VIJAY
  */
 export const SEED_PROFILES: UserProfile[] = [
   {
@@ -82,6 +82,25 @@ export const SEED_PROFILES: UserProfile[] = [
     created_at: '2026-09-01T08:20:00Z',
     updated_at: '2026-10-07T06:00:00Z',
   },
+  {
+    ...createSyncMeta('synced'),
+    id: 'user-vijay',
+    email: 'vijay@fitkonic.app',
+    display_name: 'Vijay',
+    username: 'vijay',
+    avatar_url: createAvatarSvgDataUrl('VI', '#7C3AED', '#0F172A'),
+    bio: 'Heavy compound lifts and daily discipline.',
+    height: 179,
+    weight: 78.0,
+    body_fat_percentage: 15.5,
+    date_of_birth: '1999-11-05',
+    fitness_goal: 'Strength & Power',
+    primary_sport: 'Strength Training',
+    profile_visibility: 'PUBLIC',
+    body_metrics_visibility: 'CHALLENGE_ONLY',
+    created_at: '2026-09-01T08:30:00Z',
+    updated_at: '2026-10-07T06:00:00Z',
+  },
 ];
 
 export const SEED_CHALLENGES: Challenge[] = [
@@ -91,7 +110,7 @@ export const SEED_CHALLENGES: Challenge[] = [
     creator_id: 'user-harsh',
     name: 'Winter Arc',
     slug: 'winter-arc',
-    description: '42 days of discipline. Harsh, Pranav & Kavi training and growing stronger together.',
+    description: '42 days of discipline. Harsh, Pranav, Kavi & Vijay training and growing stronger together.',
     rules:
       '1. Log what you lifted after every workout.\n2. Update what you ate each day.\n3. Track body weight and lifting weight progression.',
     start_date: '2026-09-18',
@@ -186,7 +205,7 @@ export const SEED_EXERCISES: Exercise[] = [
 
 export async function ensureSeedData(): Promise<void> {
   const existingCount = await db.profiles.count();
-  if (existingCount > 0) return;
+  if (existingCount >= 4) return;
 
   const syncMeta = createSyncMeta('synced');
 
@@ -194,6 +213,7 @@ export async function ensureSeedData(): Promise<void> {
     { ...syncMeta, id: 'cm-wa-harsh', challenge_id: 'challenge-winter-arc', user_id: 'user-harsh', role: 'owner', joined_at: '2026-09-18T10:00:00Z', status: 'active' },
     { ...syncMeta, id: 'cm-wa-pranav', challenge_id: 'challenge-winter-arc', user_id: 'user-pranav', role: 'admin', joined_at: '2026-09-18T11:00:00Z', status: 'active' },
     { ...syncMeta, id: 'cm-wa-kavi', challenge_id: 'challenge-winter-arc', user_id: 'user-kavi', role: 'member', joined_at: '2026-09-18T12:00:00Z', status: 'active' },
+    { ...syncMeta, id: 'cm-wa-vijay', challenge_id: 'challenge-winter-arc', user_id: 'user-vijay', role: 'member', joined_at: '2026-09-18T12:30:00Z', status: 'active' },
   ];
 
   const invites: ChallengeInvite[] = [
@@ -242,6 +262,15 @@ export async function ensureSeedData(): Promise<void> {
         { date: '2026-09-28', name: 'Compound Lifts', bench: 47.5, squat: 75, deadlift: 95, ohp: 30 },
         { date: '2026-10-04', name: 'Full Body', bench: 52.5, squat: 82.5, deadlift: 102.5, ohp: 32.5 },
         { date: DEMO_TODAY, name: "Today's Workout", bench: 55, squat: 87.5, deadlift: 110, ohp: 35 },
+      ],
+    },
+    {
+      userId: 'user-vijay',
+      sessions: [
+        { date: '2026-09-21', name: 'Strength Session', bench: 52.5, squat: 80, deadlift: 100, ohp: 32.5 },
+        { date: '2026-09-27', name: 'Compound Lifts', bench: 55, squat: 85, deadlift: 107.5, ohp: 35 },
+        { date: '2026-10-03', name: 'Heavy Day', bench: 60, squat: 92.5, deadlift: 115, ohp: 37.5 },
+        { date: DEMO_TODAY, name: "Today's Workout", bench: 62.5, squat: 97.5, deadlift: 122.5, ohp: 40 },
       ],
     },
   ];
@@ -429,9 +458,41 @@ export async function ensureSeedData(): Promise<void> {
       notes: '',
       created_at: '2026-10-07T08:15:00Z',
     },
+    {
+      ...syncMeta,
+      id: 'diet-vijay-1',
+      user_id: 'user-vijay',
+      challenge_id: 'challenge-winter-arc',
+      date: DEMO_TODAY,
+      meal_type: 'Breakfast',
+      description: '4 Boiled eggs, 2 multigrain toast & banana',
+      calories: 520,
+      protein: 30,
+      carbs: 52,
+      fat: 16,
+      photo_url: null,
+      notes: '',
+      created_at: '2026-10-07T08:25:00Z',
+    },
+    {
+      ...syncMeta,
+      id: 'diet-vijay-2',
+      user_id: 'user-vijay',
+      challenge_id: 'challenge-winter-arc',
+      date: DEMO_TODAY,
+      meal_type: 'Lunch',
+      description: '3 Chapati, paneer bhurji, dal & curd',
+      calories: 680,
+      protein: 42,
+      carbs: 68,
+      fat: 20,
+      photo_url: null,
+      notes: '',
+      created_at: '2026-10-07T13:45:00Z',
+    },
   ];
 
-  // Body Weight History for Harsh, Pranav, and Kavi
+  // Body Weight History for Harsh, Pranav, Kavi, and Vijay
   const bodyMetrics: BodyMetric[] = [
     // Harsh: 84.5 kg -> 82.0 kg
     { ...syncMeta, id: 'bm-h-1', user_id: 'user-harsh', date: '2026-09-18', weight: 84.5, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8000, notes: 'Week 1' },
@@ -448,6 +509,11 @@ export async function ensureSeedData(): Promise<void> {
     { ...syncMeta, id: 'bm-k-2', user_id: 'user-kavi', date: '2026-09-25', weight: 75.1, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 2.9, steps: 8300, notes: 'Week 2' },
     { ...syncMeta, id: 'bm-k-3', user_id: 'user-kavi', date: '2026-10-02', weight: 74.5, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8600, notes: 'Week 3' },
     { ...syncMeta, id: 'bm-k-4', user_id: 'user-kavi', date: DEMO_TODAY, weight: 74.0, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 2.6, steps: 7900, notes: 'Today' },
+    // Vijay: 79.5 kg -> 78.0 kg
+    { ...syncMeta, id: 'bm-v-1', user_id: 'user-vijay', date: '2026-09-18', weight: 79.5, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8100, notes: 'Week 1' },
+    { ...syncMeta, id: 'bm-v-2', user_id: 'user-vijay', date: '2026-09-25', weight: 79.0, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8400, notes: 'Week 2' },
+    { ...syncMeta, id: 'bm-v-3', user_id: 'user-vijay', date: '2026-10-02', weight: 78.4, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.1, steps: 8700, notes: 'Week 3' },
+    { ...syncMeta, id: 'bm-v-4', user_id: 'user-vijay', date: DEMO_TODAY, weight: 78.0, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 2.8, steps: 8200, notes: 'Today' },
   ];
 
   const personalRecords: PersonalRecord[] = [
@@ -456,6 +522,7 @@ export async function ensureSeedData(): Promise<void> {
     { ...syncMeta, id: 'pr-h-deadlift', user_id: 'user-harsh', exercise_id: 'ex-deadlift', weight: 130, reps: 5, estimated_1rm: 151.7, pr_type: 'max_weight', achieved_at: '2026-10-07T08:00:00Z' },
     { ...syncMeta, id: 'pr-p-bench', user_id: 'user-pranav', exercise_id: 'ex-bench-press', weight: 60, reps: 8, estimated_1rm: 76, pr_type: 'max_weight', achieved_at: '2026-10-07T08:00:00Z' },
     { ...syncMeta, id: 'pr-k-bench', user_id: 'user-kavi', exercise_id: 'ex-bench-press', weight: 55, reps: 8, estimated_1rm: 69.7, pr_type: 'max_weight', achieved_at: '2026-10-07T08:00:00Z' },
+    { ...syncMeta, id: 'pr-v-bench', user_id: 'user-vijay', exercise_id: 'ex-bench-press', weight: 62.5, reps: 8, estimated_1rm: 79.2, pr_type: 'max_weight', achieved_at: '2026-10-07T08:00:00Z' },
   ];
 
   await db.transaction(

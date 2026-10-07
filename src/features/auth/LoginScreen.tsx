@@ -56,10 +56,10 @@ export function LoginScreen() {
         <FitkonicLogo size="lg" />
       </header>
 
-      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-8 max-w-md mx-auto w-full">
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-8 max-w-lg mx-auto w-full">
         <div className="text-center mb-8">
           <div className="inline-block px-3 py-1 rounded-full bg-[#7DD3FC]/10 border border-[#7DD3FC]/30 text-[#7DD3FC] text-xs font-display font-bold uppercase tracking-widest mb-3">
-            Harsh • Pranav • Kavi
+            Harsh • Pranav • Kavi • Vijay
           </div>
           <h1 className="font-display font-extrabold text-5xl sm:text-6xl tracking-tighter uppercase text-[#F5F7FA]">
             WINTER ARC
@@ -69,14 +69,14 @@ export function LoginScreen() {
           </p>
         </div>
 
-        {/* 3 Athlete Logins: Harsh, Pranav, Kavi */}
+        {/* 4 Athlete Logins: Harsh, Pranav, Kavi, Vijay */}
         <div className="w-full bg-[#0D1117]/90 border border-[#202A35] rounded-2xl p-5 space-y-4 shadow-card">
           <p className="text-xs text-center uppercase tracking-wider text-[#8B98A8] flex items-center justify-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-[#7DD3FC]" />
             <span>Select Your Login</span>
           </p>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {SEED_PROFILES.map((member) => (
               <button
                 key={member.id}
