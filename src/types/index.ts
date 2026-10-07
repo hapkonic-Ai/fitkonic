@@ -98,10 +98,10 @@ export interface UserProfile extends SyncMetadata {
   username: string;
   avatar_url: string;
   bio: string;
-  height: number;
-  weight: number;
-  body_fat_percentage?: number;
-  date_of_birth: string;
+  height: number | null;
+  weight: number | null;
+  body_fat_percentage?: number | null;
+  date_of_birth: string | null;
   fitness_goal: string;
   primary_sport: string;
   profile_visibility?: 'PUBLIC' | 'CHALLENGE_ONLY' | 'PRIVATE';

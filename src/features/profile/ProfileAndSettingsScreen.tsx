@@ -39,25 +39,38 @@ export function ProfileScreen() {
   const [editOpen, setEditOpen] = useState(false);
 
   const data = useLiveQuery(async () => {
-    const [profile, challenge, workouts, prs, exercises, bodyMetrics] = await Promise.all([
-      db.profiles.get(uid),
-      db.cached_challenges.get(activeChallengeId || 'challenge-winter-arc'),
-      db.workouts.where('user_id').equals(uid).toArray(),
-      db.personal_records.where('user_id').equals(uid).toArray(),
-      db.exercises.toArray(),
-      db.body_metrics.where('user_id').equals(uid).toArray(),
-    ]);
+    const [profile, challenge, workouts, workoutExercises, sets, prs, exercises, bodyMetrics] =
+      await Promise.all([
+        db.profiles.get(uid),
+        db.cached_challenges.get(activeChallengeId || 'challenge-winter-arc'),
+        db.workouts.where('user_id').equals(uid).toArray(),
+        db.workout_exercises.toArray(),
+        db.sets.toArray(),
+        db.personal_records.where('user_id').equals(uid).toArray(),
+        db.exercises.toArray(),
+        db.body_metrics.where('user_id').equals(uid).toArray(),
+      ]);
 
     const exMap = new Map(exercises.map((e) => [e.id, e.name]));
+    const completedWorkouts = workouts.filter((w) => w.completed);
     const streak = calculateStreak(
-      workouts.filter((w) => w.completed).map((w) => w.workout_date),
+      completedWorkouts.map((w) => w.workout_date),
       DEMO_TODAY
     );
+
+    const workoutIds = new Set(completedWorkouts.map((w) => w.id));
+    const userWEIds = new Set(
+      workoutExercises.filter((we) => workoutIds.has(we.workout_id)).map((we) => we.id)
+    );
+    const totalVolume = sets
+      .filter((s) => userWEIds.has(s.workout_exercise_id) && s.completed)
+      .reduce((sum, s) => sum + (s.weight > 0 && s.reps > 0 ? s.weight * s.reps : 0), 0);
 
     return {
       profile,
       challenge,
-      workoutCount: Math.max(128, workouts.length),
+      workoutCount: completedWorkouts.length,
+      totalVolume,
       streak,
       prs,
       exMap,
@@ -68,30 +81,30 @@ export function ProfileScreen() {
   const [displayName, setDisplayName] = useState('');
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
-  const [weight, setWeight] = useState('130');
-  const [bodyFat, setBodyFat] = useState('28');
-  const [height, setHeight] = useState('180');
-  const [fitnessGoal, setFitnessGoal] = useState('Strength & Recomp');
-  const [primarySport, setPrimarySport] = useState('Powerbuilding');
+  const [weight, setWeight] = useState('');
+  const [bodyFat, setBodyFat] = useState('');
+  const [height, setHeight] = useState('');
+  const [fitnessGoal, setFitnessGoal] = useState('Strength & Muscle');
+  const [primarySport, setPrimarySport] = useState('PPL & Full Body');
 
   if (!data || !data.profile) {
     return <div className="p-6 h-80 rounded-2xl bg-[#0D1117] animate-pulse" />;
   }
 
-  const { profile, challenge, workoutCount, streak, prs, exMap } = data;
+  const { profile, challenge, workoutCount, totalVolume, streak, prs, exMap } = data;
   const challengeProgress = challenge
     ? calculateChallengeProgress(challenge.start_date, challenge.end_date, DEMO_TODAY)
-    : { percentage: 28, remainingDays: 42 };
+    : { percentage: 1, remainingDays: 89 };
 
   const openEditModal = () => {
     setDisplayName(profile.display_name);
     setUsername(profile.username);
     setBio(profile.bio || '');
-    setWeight(String(profile.weight || 130));
-    setBodyFat(String(profile.body_fat_percentage || 28));
-    setHeight(String(profile.height || 180));
-    setFitnessGoal(profile.fitness_goal || 'Strength & Recomp');
-    setPrimarySport(profile.primary_sport || 'Powerbuilding');
+    setWeight(profile.weight ? String(profile.weight) : '');
+    setBodyFat(profile.body_fat_percentage ? String(profile.body_fat_percentage) : '');
+    setHeight(profile.height ? String(profile.height) : '');
+    setFitnessGoal(profile.fitness_goal || 'Strength & Muscle');
+    setPrimarySport(profile.primary_sport || 'PPL & Full Body');
     setEditOpen(true);
   };
 
@@ -230,18 +243,17 @@ export function ProfileScreen() {
 
         {activeTab === 'stats' && (
           <div className="space-y-4 pt-2 text-left">
-            {/* 3-Column Stat Row: Weight 130 kg | Body Fat 28% | Workouts 128 */}
             <div className="grid grid-cols-3 gap-3">
               <div className="p-3.5 rounded-xl bg-[#121821] border border-[#202A35]">
                 <p className="text-xs text-[#8B98A8]">Weight</p>
                 <p className="font-display font-extrabold text-xl text-[#F5F7FA] mt-0.5">
-                  {Math.round(profile.weight || 130)} kg
+                  {profile.weight ? `${profile.weight} kg` : '—'}
                 </p>
               </div>
               <div className="p-3.5 rounded-xl bg-[#121821] border border-[#202A35]">
                 <p className="text-xs text-[#8B98A8]">Body Fat</p>
                 <p className="font-display font-extrabold text-xl text-[#F5F7FA] mt-0.5">
-                  {profile.body_fat_percentage ?? 28}%
+                  {profile.body_fat_percentage ? `${profile.body_fat_percentage}%` : '—'}
                 </p>
               </div>
               <div className="p-3.5 rounded-xl bg-[#121821] border border-[#202A35]">
@@ -257,13 +269,13 @@ export function ProfileScreen() {
               <div>
                 <p className="text-xs text-[#8B98A8]">Total Volume</p>
                 <p className="font-display font-extrabold text-2xl text-[#F5F7FA] mt-0.5">
-                  1.2M kg
+                  {totalVolume.toLocaleString()} kg
                 </p>
               </div>
               <div className="text-right">
                 <p className="text-xs text-[#8B98A8]">Training Streak</p>
                 <p className="font-display font-bold text-lg text-[#5EC8FF] mt-0.5">
-                  {Math.max(12, streak)} Days
+                  {streak} {streak === 1 ? 'Day' : 'Days'}
                 </p>
               </div>
             </div>
@@ -307,15 +319,21 @@ export function ProfileScreen() {
 
         {activeTab === 'prs' && (
           <div className="space-y-3 pt-2 text-left">
-            {prs.map((pr) => (
-              <PRBadge
-                key={pr.id}
-                exerciseName={exMap.get(pr.exercise_id) || 'Barbell Bench Press'}
-                weight={pr.weight}
-                reps={pr.reps}
-                estimated1RM={pr.estimated_1rm}
-              />
-            ))}
+            {prs.length === 0 ? (
+              <p className="text-xs text-[#8B98A8] text-center py-4">
+                No PRs recorded yet — log your Day 1 workout to establish your starting PRs!
+              </p>
+            ) : (
+              prs.map((pr) => (
+                <PRBadge
+                  key={pr.id}
+                  exerciseName={exMap.get(pr.exercise_id) || 'Barbell Bench Press'}
+                  weight={pr.weight}
+                  reps={pr.reps}
+                  estimated1RM={pr.estimated_1rm}
+                />
+              ))
+            )}
           </div>
         )}
 
@@ -327,7 +345,8 @@ export function ProfileScreen() {
                   Body Transformation Metrics
                 </p>
                 <p className="text-xs text-[#8B98A8]">
-                  Height: {profile.height} cm • Starting: 133.0 kg → Current: {profile.weight} kg
+                  Height: {profile.height ? `${profile.height} cm` : '—'} • Current Weight:{' '}
+                  {profile.weight ? `${profile.weight} kg` : 'Not logged yet'}
                 </p>
               </div>
               <button

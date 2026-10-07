@@ -1,20 +1,17 @@
 import { db } from './dexie';
 import { createSyncMeta } from '@/lib/utils';
 import type {
-  BodyMetric,
   Challenge,
   ChallengeInvite,
   ChallengeMember,
-  DietLog,
   Exercise,
-  PersonalRecord,
   UserProfile,
-  Workout,
-  WorkoutExercise,
-  WorkoutSet,
 } from '@/types';
 
-export const DEMO_TODAY = '2026-10-07';
+export const DEMO_TODAY = new Date().toISOString().slice(0, 10);
+export const WINTER_ARC_END_DATE = new Date(Date.now() + 89 * 86400000)
+  .toISOString()
+  .slice(0, 10);
 
 function createAvatarSvgDataUrl(initials: string, bg1: string, bg2: string): string {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${bg1}"/><stop offset="100%" stop-color="${bg2}"/></linearGradient></defs><rect width="120" height="120" rx="60" fill="url(#g)"/><circle cx="60" cy="44" r="20" fill="#F5F7FA" fill-opacity="0.22"/><path d="M24 108C28 84 42 74 60 74C78 74 92 84 96 108" fill="#F5F7FA" fill-opacity="0.22"/><text x="60" y="68" text-anchor="middle" fill="#F5F7FA" font-family="Space Grotesk, Inter, sans-serif" font-weight="700" font-size="36">${initials}</text></svg>`;
@@ -22,7 +19,7 @@ function createAvatarSvgDataUrl(initials: string, bg1: string, bg2: string): str
 }
 
 /**
- * THE 4 ATHLETE LOGINS: HARSH, PRANAV, KAVI, VIJAY
+ * THE 4 ATHLETE LOGINS: HARSH, PRANAV, KAVI, VIJAY (Clean Day 1 profiles — zero fake data)
  */
 export const SEED_PROFILES: UserProfile[] = [
   {
@@ -33,16 +30,16 @@ export const SEED_PROFILES: UserProfile[] = [
     username: 'harsh',
     avatar_url: createAvatarSvgDataUrl('HA', '#0284C7', '#0F172A'),
     bio: 'Discipline today. Stronger tomorrow.',
-    height: 180,
-    weight: 82.0,
-    body_fat_percentage: 16,
-    date_of_birth: '1999-04-14',
+    height: null,
+    weight: null,
+    body_fat_percentage: null,
+    date_of_birth: null,
     fitness_goal: 'Strength & Muscle',
-    primary_sport: 'Strength Training',
+    primary_sport: 'PPL & Full Body',
     profile_visibility: 'PUBLIC',
     body_metrics_visibility: 'CHALLENGE_ONLY',
-    created_at: '2026-09-01T08:00:00Z',
-    updated_at: '2026-10-07T06:00:00Z',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
   {
     ...createSyncMeta('synced'),
@@ -51,17 +48,17 @@ export const SEED_PROFILES: UserProfile[] = [
     display_name: 'Pranav',
     username: 'pranav',
     avatar_url: createAvatarSvgDataUrl('PR', '#D97706', '#1E1B4B'),
-    bio: 'Progressive overload every week.',
-    height: 178,
-    weight: 76.5,
-    body_fat_percentage: 15,
-    date_of_birth: '1999-08-21',
+    bio: 'Discipline today. Stronger tomorrow.',
+    height: null,
+    weight: null,
+    body_fat_percentage: null,
+    date_of_birth: null,
     fitness_goal: 'Strength & Hypertrophy',
-    primary_sport: 'Strength Training',
+    primary_sport: 'PPL & Full Body',
     profile_visibility: 'PUBLIC',
     body_metrics_visibility: 'CHALLENGE_ONLY',
-    created_at: '2026-09-01T08:10:00Z',
-    updated_at: '2026-10-07T06:00:00Z',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
   {
     ...createSyncMeta('synced'),
@@ -70,17 +67,17 @@ export const SEED_PROFILES: UserProfile[] = [
     display_name: 'Kavi',
     username: 'kavi',
     avatar_url: createAvatarSvgDataUrl('KA', '#16A34A', '#0F172A'),
-    bio: 'Consistent training and clean food.',
-    height: 176,
-    weight: 74.0,
-    body_fat_percentage: 15,
-    date_of_birth: '2000-01-12',
+    bio: 'Discipline today. Stronger tomorrow.',
+    height: null,
+    weight: null,
+    body_fat_percentage: null,
+    date_of_birth: null,
     fitness_goal: 'Strength & Conditioning',
-    primary_sport: 'Strength Training',
+    primary_sport: 'PPL & Full Body',
     profile_visibility: 'PUBLIC',
     body_metrics_visibility: 'CHALLENGE_ONLY',
-    created_at: '2026-09-01T08:20:00Z',
-    updated_at: '2026-10-07T06:00:00Z',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
   {
     ...createSyncMeta('synced'),
@@ -89,17 +86,17 @@ export const SEED_PROFILES: UserProfile[] = [
     display_name: 'Vijay',
     username: 'vijay',
     avatar_url: createAvatarSvgDataUrl('VI', '#7C3AED', '#0F172A'),
-    bio: 'Heavy compound lifts and daily discipline.',
-    height: 179,
-    weight: 78.0,
-    body_fat_percentage: 15.5,
-    date_of_birth: '1999-11-05',
+    bio: 'Discipline today. Stronger tomorrow.',
+    height: null,
+    weight: null,
+    body_fat_percentage: null,
+    date_of_birth: null,
     fitness_goal: 'Strength & Power',
-    primary_sport: 'Strength Training',
+    primary_sport: 'PPL & Full Body',
     profile_visibility: 'PUBLIC',
     body_metrics_visibility: 'CHALLENGE_ONLY',
-    created_at: '2026-09-01T08:30:00Z',
-    updated_at: '2026-10-07T06:00:00Z',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
 ];
 
@@ -110,11 +107,12 @@ export const SEED_CHALLENGES: Challenge[] = [
     creator_id: 'user-harsh',
     name: 'Winter Arc',
     slug: 'winter-arc',
-    description: '42 days of discipline. Harsh, Pranav, Kavi & Vijay training and growing stronger together.',
+    description:
+      'Day 1 starts today — Harsh, Pranav, Kavi & Vijay alternating Push/Pull/Legs and Full Body splits.',
     rules:
-      '1. Log what you lifted after every workout.\n2. Update what you ate each day.\n3. Track body weight and lifting weight progression.',
-    start_date: '2026-09-18',
-    end_date: '2026-10-29',
+      '1. Alternate PPL Week and Full Body Week.\n2. Log your lifting weights & reps after every workout.\n3. Update what you ate and your body weight.',
+    start_date: DEMO_TODAY,
+    end_date: WINTER_ARC_END_DATE,
     status: 'ACTIVE',
     visibility: 'INVITE_ONLY',
     max_members: 10,
@@ -134,160 +132,397 @@ export const SEED_CHALLENGES: Challenge[] = [
     show_diet: true,
     show_workouts: true,
     allow_member_invites: true,
-    leaderboard_metric: 'consistency',
-    created_at: '2026-09-18T10:00:00Z',
-    updated_at: '2026-10-07T06:00:00Z',
-  },
-  {
-    ...createSyncMeta('synced'),
-    id: 'challenge-summer-shred',
-    creator_id: 'user-pranav',
-    name: 'Summer Shred',
-    slug: 'summer-shred',
-    description: 'Lean conditioning and strength retention challenge.',
-    rules: '1. Log daily meals.\n2. 4x strength sessions weekly.',
-    start_date: '2026-09-20',
-    end_date: '2026-11-14',
-    status: 'ACTIVE',
-    visibility: 'PUBLIC',
-    max_members: 20,
-    background_image_url: '/themes/summer-shred.svg',
-    background_position: 'center center',
-    background_overlay: 0.58,
-    accent_color: '#F59E0B',
-    show_leaderboard: true,
-    show_diet: true,
-    show_workouts: true,
-    allow_member_invites: true,
-    leaderboard_metric: 'consistency',
-    created_at: '2026-09-19T10:00:00Z',
-    updated_at: '2026-10-07T06:00:00Z',
-  },
-  {
-    ...createSyncMeta('synced'),
-    id: 'challenge-powerlifting-peak',
-    creator_id: 'user-kavi',
-    name: 'Powerlifting Peak',
-    slug: 'powerlifting-peak',
-    description: 'Focus on increasing Squat, Bench, and Deadlift weights every week.',
-    rules: '1. Track top set weight on every compound lift.',
-    start_date: '2026-09-22',
-    end_date: '2026-11-16',
-    status: 'ACTIVE',
-    visibility: 'PUBLIC',
-    max_members: 20,
-    background_image_url: '/themes/powerlifting-peak.svg',
-    background_position: 'center center',
-    background_overlay: 0.68,
-    accent_color: '#EF4444',
-    show_leaderboard: true,
-    show_diet: false,
-    show_workouts: true,
-    allow_member_invites: true,
     leaderboard_metric: 'training_volume',
-    created_at: '2026-09-21T10:00:00Z',
-    updated_at: '2026-10-07T06:00:00Z',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   },
 ];
 
+/**
+ * 100+ BUILT-IN EXERCISES (Includes every single exercise from Squad PPL, Full Body & Boxing HIIT + full gym library)
+ */
 export const SEED_EXERCISES: Exercise[] = [
   // Chest
-  { ...createSyncMeta('synced'), id: 'ex-bench-press', name: 'Bench Press', category: 'Push', muscle_group: 'Chest', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-bench-press', name: 'Barbell Bench Press', category: 'Push', muscle_group: 'Chest', equipment: 'Barbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-incline-db-press', name: 'Incline Dumbbell Press', category: 'Push', muscle_group: 'Chest', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-decline-cable-cross', name: 'Decline Cable Cross', category: 'Push', muscle_group: 'Chest', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-cable-fly', name: 'Cable Crossover', category: 'Push', muscle_group: 'Chest', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-low-to-high-cable-fly', name: 'Low to High Cable Flye', category: 'Push', muscle_group: 'Chest', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-close-grip-bench', name: 'Close Grip Bench Press', category: 'Push', muscle_group: 'Chest', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-pushups', name: 'Push-Up', category: 'Push', muscle_group: 'Chest', equipment: 'Bodyweight', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-incline-bench-press', name: 'Incline Barbell Bench Press', category: 'Push', muscle_group: 'Chest', equipment: 'Barbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-flat-db-press', name: 'Flat Dumbbell Press', category: 'Push', muscle_group: 'Chest', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-decline-bench-press', name: 'Decline Bench Press', category: 'Push', muscle_group: 'Chest', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-decline-bench-press', name: 'Decline Barbell Bench Press', category: 'Push', muscle_group: 'Chest', equipment: 'Barbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-chest-press-machine', name: 'Machine Chest Press', category: 'Push', muscle_group: 'Chest', equipment: 'Machine', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-pec-deck', name: 'Pec Deck / Machine Fly', category: 'Push', muscle_group: 'Chest', equipment: 'Machine', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-cable-fly', name: 'Cable Chest Fly', category: 'Push', muscle_group: 'Chest', equipment: 'Cable', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-db-fly', name: 'Dumbbell Chest Fly', category: 'Push', muscle_group: 'Chest', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-chest-dips', name: 'Chest Dips (Weighted)', category: 'Push', muscle_group: 'Chest', equipment: 'Bodyweight', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-pushups', name: 'Push-Ups', category: 'Push', muscle_group: 'Chest', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-chest-dips', name: 'Weighted Chest Dips', category: 'Push', muscle_group: 'Chest', equipment: 'Bodyweight', is_custom: false, created_by: null },
 
   // Back
-  { ...createSyncMeta('synced'), id: 'ex-deadlift', name: 'Deadlift', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-lat-pulldown', name: 'Lat Pulldown', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-barbell-row', name: 'Barbell Row', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-pullups', name: 'Pull-Ups / Chin-Ups', category: 'Pull', muscle_group: 'Back', equipment: 'Bodyweight', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-seated-cable-row', name: 'Seated Cable Row', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-scapular-pullups', name: 'Scapular Pullups / Pullups', category: 'Pull', muscle_group: 'Back', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-seated-cable-row', name: 'Cable Seated Row', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-kneeling-cable-pullover', name: 'Cable Pullover (Kneeling)', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-cable-pullover', name: 'Cable Pullover', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-seated-row-machine', name: 'Seated Row Machine', category: 'Pull', muscle_group: 'Back', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-omni-lat-pulldown', name: 'Omni Grip Lat Pulldown', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-lat-pulldown', name: 'Pronated Lat Pulldown', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-chest-supported-tbar-row', name: 'Chest-Supported T-Bar Row', category: 'Pull', muscle_group: 'Back', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-humble-row', name: 'Humble Row / Dumbbell Row', category: 'Pull', muscle_group: 'Back', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-incline-db-shrug', name: 'Incline Dumbbell Shrugs', category: 'Pull', muscle_group: 'Back', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-smith-shrug', name: 'Smith Machine Shrug', category: 'Pull', muscle_group: 'Back', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-deadlift', name: 'Classic Deadlift', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-reset-deadlift', name: 'Reset Deadlift', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-sumo-deadlift', name: 'Sumo Deadlift', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-barbell-row', name: 'Barbell Bent-Over Row', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-one-arm-db-row', name: 'One-Arm Dumbbell Row', category: 'Pull', muscle_group: 'Back', equipment: 'Dumbbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-t-bar-row', name: 'T-Bar Row', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-chest-supported-row', name: 'Chest-Supported Machine Row', category: 'Pull', muscle_group: 'Back', equipment: 'Machine', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-straight-arm-pulldown', name: 'Straight-Arm Cable Pulldown', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-close-grip-pulldown', name: 'Close-Grip Lat Pulldown', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-shrugs', name: 'Dumbbell / Barbell Shrugs', category: 'Pull', muscle_group: 'Back', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-hyperextension', name: 'Back Extension / Hyperextension', category: 'Pull', muscle_group: 'Back', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-shrugs', name: 'Barbell / Dumbbell Shrugs', category: 'Pull', muscle_group: 'Back', equipment: 'Dumbbell', is_custom: false, created_by: null },
 
-  // Legs
-  { ...createSyncMeta('synced'), id: 'ex-squat', name: 'Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-leg-press', name: 'Leg Press', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-romanian-deadlift', name: 'Romanian Deadlift (RDL)', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-hack-squat', name: 'Hack Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-front-squat', name: 'Front Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-bulgarian-split-squat', name: 'Bulgarian Split Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-walking-lunges', name: 'Dumbbell Lunges', category: 'Legs', muscle_group: 'Legs', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-leg-extension', name: 'Leg Extension', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-lying-leg-curl', name: 'Lying Hamstring Curl', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-seated-leg-curl', name: 'Seated Hamstring Curl', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-hip-thrust', name: 'Barbell Hip Thrust', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-standing-calf-raise', name: 'Standing Calf Raise', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-seated-calf-raise', name: 'Seated Calf Raise', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-goblet-squat', name: 'Goblet Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-sumo-deadlift', name: 'Sumo Deadlift', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
-
-  // Shoulders
-  { ...createSyncMeta('synced'), id: 'ex-overhead-press', name: 'Shoulder Press', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-barbell-ohp', name: 'Overhead Barbell Press (OHP)', category: 'Push', muscle_group: 'Shoulders', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-lateral-raise', name: 'Dumbbell Lateral Raise', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-cable-lateral-raise', name: 'Cable Lateral Raise', category: 'Push', muscle_group: 'Shoulders', equipment: 'Cable', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-face-pull', name: 'Cable Face Pull', category: 'Pull', muscle_group: 'Shoulders', equipment: 'Cable', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-rear-delt-fly', name: 'Rear Delt Reverse Fly', category: 'Pull', muscle_group: 'Shoulders', equipment: 'Machine', is_custom: false, created_by: null },
+  // Shoulders & Neck
+  { ...createSyncMeta('synced'), id: 'ex-standing-arnold-press', name: 'Standing Arnold Press', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-arnold-press', name: 'Arnold Press', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-overhead-press', name: 'Standing Overhead Shoulder Press', category: 'Push', muscle_group: 'Shoulders', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-egyptian-lateral-raise', name: 'Egyptian Cable Lateral Raise', category: 'Push', muscle_group: 'Shoulders', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-lateral-raise-21s', name: "Lateral Raises 21's (10+10+10)", category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-lateral-raise', name: 'Dumbbell Lateral Raises', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-face-pull', name: 'Rope Face Pulls', category: 'Pull', muscle_group: 'Shoulders', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-reverse-pec-deck', name: 'Reverse Pec Deck Fly', category: 'Pull', muscle_group: 'Shoulders', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-cable-rope-upright-row', name: 'Cable Rope Upright Row', category: 'Pull', muscle_group: 'Shoulders', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-weighted-neck-curl', name: 'Weighted Neck Curl (Front & Back)', category: 'Push', muscle_group: 'Shoulders', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-db-shoulder-press', name: 'Seated Dumbbell Shoulder Press', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-front-raise', name: 'Dumbbell Front Raise', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-upright-row', name: 'Barbell / Cable Upright Row', category: 'Pull', muscle_group: 'Shoulders', equipment: 'Barbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-machine-shoulder-press', name: 'Machine Shoulder Press', category: 'Push', muscle_group: 'Shoulders', equipment: 'Machine', is_custom: false, created_by: null },
 
+  // Legs (Quads, Hamstrings, Glutes, Calves)
+  { ...createSyncMeta('synced'), id: 'ex-deep-squat', name: 'Deep Squats', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-squat', name: 'Back Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-romanian-deadlift', name: 'Romanian Deadlift (RDL)', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-leg-press', name: 'Leg Press', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-leg-extension', name: 'Leg Extension', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-lying-leg-curl', name: 'Lying Leg Curl', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-standing-calf-raise', name: 'Standing Calf Raises', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-calf-tibia-raise', name: 'Calf Raises with Tibia Extension', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-hack-squat', name: 'Hack Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-single-leg-hip-thrust', name: 'Single Leg Hip Thrust', category: 'Legs', muscle_group: 'Legs', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-nordic-ham-curl', name: 'Nordic Hamstring Curl', category: 'Legs', muscle_group: 'Legs', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-glute-ham-raise', name: 'Glute Ham Raise', category: 'Legs', muscle_group: 'Legs', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-bulgarian-split-squat', name: 'Bulgarian Split Squats', category: 'Legs', muscle_group: 'Legs', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-hip-abduction', name: 'Seated Hip Abduction', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-front-squat', name: 'Front Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-walking-lunges', name: 'Dumbbell Walking Lunges', category: 'Legs', muscle_group: 'Legs', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-seated-leg-curl', name: 'Seated Hamstring Curl', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-hip-thrust', name: 'Barbell Hip Thrust', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-seated-calf-raise', name: 'Seated Calf Raise', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+
   // Biceps & Forearms
-  { ...createSyncMeta('synced'), id: 'ex-bicep-curl', name: 'Bicep Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-barbell-curl', name: 'Barbell / EZ-Bar Bicep Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-hammer-cheat-curl', name: 'Hammer Cheat Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-hammer-curl', name: 'Dumbbell Hammer Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-incline-db-curl', name: 'Seated Incline Dumbbell Curl (Supinated)', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-bicep-curl-machine', name: 'Bicep Curl Machine', category: 'Pull', muscle_group: 'Biceps', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-forearm-curls', name: 'Forearm Wrist Curls', category: 'Pull', muscle_group: 'Biceps', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-ez-pronated-curl', name: 'E-Z Bar Pronated Curls', category: 'Pull', muscle_group: 'Biceps', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-ez-bar-curl', name: 'E-Z Bar Supinated Curls', category: 'Pull', muscle_group: 'Biceps', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-bicep-curl', name: 'Dumbbell Bicep Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-preacher-curl', name: 'Preacher Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Machine', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-incline-db-curl', name: 'Incline Dumbbell Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-cable-bicep-curl', name: 'Cable Bicep Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Cable', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-concentration-curl', name: 'Concentration Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-reverse-curl', name: 'Reverse Barbell Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Barbell', is_custom: false, created_by: null },
 
   // Triceps
   { ...createSyncMeta('synced'), id: 'ex-tricep-pushdown', name: 'Tricep Pushdown', category: 'Push', muscle_group: 'Triceps', equipment: 'Cable', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-overhead-tricep-ext', name: 'Overhead Cable / DB Tricep Extension', category: 'Push', muscle_group: 'Triceps', equipment: 'Cable', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-skull-crushers', name: 'Skull Crushers (EZ-Bar)', category: 'Push', muscle_group: 'Triceps', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-close-grip-bench', name: 'Close-Grip Bench Press', category: 'Push', muscle_group: 'Triceps', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-tricep-dips', name: 'Tricep Bench / Parallel Dips', category: 'Push', muscle_group: 'Triceps', equipment: 'Bodyweight', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-single-arm-pushdown', name: 'Single-Arm Cable Tricep Extension', category: 'Push', muscle_group: 'Triceps', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-eccentric-skullcrusher', name: 'Eccentric Accentuated Skullcrusher', category: 'Push', muscle_group: 'Triceps', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-skull-crushers', name: 'E-Z Bar Skull Crusher', category: 'Push', muscle_group: 'Triceps', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-cable-tricep-kickback', name: 'Cable Tricep Kickback', category: 'Push', muscle_group: 'Triceps', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-overhead-tricep-ext', name: 'Overhead Tricep Extension', category: 'Push', muscle_group: 'Triceps', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-tricep-dips', name: 'Tricep Parallel Dips', category: 'Push', muscle_group: 'Triceps', equipment: 'Bodyweight', is_custom: false, created_by: null },
 
-  // Core & Conditioning
-  { ...createSyncMeta('synced'), id: 'ex-hanging-leg-raise', name: 'Hanging Leg Raise', category: 'Core', muscle_group: 'Core', equipment: 'Bodyweight', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-cable-crunch', name: 'Cable Rope Crunch', category: 'Core', muscle_group: 'Core', equipment: 'Cable', is_custom: false, created_by: null },
+  // Core & Abs
+  { ...createSyncMeta('synced'), id: 'ex-decline-crunch', name: 'Decline Crunches', category: 'Core', muscle_group: 'Core', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-long-lever-plank', name: 'Long Lever Plank (Seconds)', category: 'Core', muscle_group: 'Core', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-bicycle-crunch', name: 'Bicycle Crunches', category: 'Core', muscle_group: 'Core', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-cable-crunch', name: 'Weighted Kneeling Cable Crunches', category: 'Core', muscle_group: 'Core', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-hanging-leg-raise', name: 'Hanging Leg Raises', category: 'Core', muscle_group: 'Core', equipment: 'Bodyweight', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-ab-wheel', name: 'Ab Wheel Rollout', category: 'Core', muscle_group: 'Core', equipment: 'Bodyweight', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-plank', name: 'Weighted Plank', category: 'Core', muscle_group: 'Core', equipment: 'Bodyweight', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-farmers-walk', name: "Farmer's Walk", category: 'Full Body', muscle_group: 'Full Body', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-sled-push', name: 'Sled Push / Pull', category: 'Full Body', muscle_group: 'Full Body', equipment: 'Machine', is_custom: false, created_by: null },
+
+  // Intense Boxing HIIT & Conditioning Drills
+  { ...createSyncMeta('synced'), id: 'ex-jump-rope', name: 'Jump Rope (Seconds)', category: 'Cardio', muscle_group: 'Cardio', equipment: 'Cardio', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-dynamic-stretching', name: 'Dynamic Stretching (Seconds)', category: 'Cardio', muscle_group: 'Cardio', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-shadow-boxing-high-knees', name: 'Shadow Boxing with High Knees (Seconds)', category: 'Cardio', muscle_group: 'Cardio', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-battle-rope-slams', name: 'Battle Rope Double Arm Slams (40s)', category: 'Cardio', muscle_group: 'Cardio', equipment: 'Cardio', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-tire-flips', name: 'Tire Flips (40s)', category: 'Full Body', muscle_group: 'Cardio', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-sledgehammer-slams', name: 'Sledgehammer Tire Slams (40s)', category: 'Full Body', muscle_group: 'Cardio', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-boxing-burpees', name: 'Boxing Combinations with Burpees (40s)', category: 'Cardio', muscle_group: 'Cardio', equipment: 'Bodyweight', is_custom: false, created_by: null },
+];
+
+export interface SquadTemplateExercise {
+  exerciseId: string;
+  repsPerSet: number[];
+  note?: string;
+}
+
+export interface SquadWorkoutTemplate {
+  id: string;
+  splitGroup: 'PPL' | 'FULL_BODY' | 'BOXING_HIIT';
+  shortLabel: string;
+  name: string;
+  focusSubtitle: string;
+  exercises: SquadTemplateExercise[];
+}
+
+/**
+ * SQUAD WORKOUT ROUTINES:
+ * Alternating 1 Week Push-Pull-Legs (PPL) & 1 Week Full Body + Intense Boxing HIIT Drill
+ */
+export const SQUAD_WORKOUT_TEMPLATES: SquadWorkoutTemplate[] = [
+  // ==========================================
+  // WEEK A: PUSH PULL LEGS (PPL)
+  // ==========================================
+  {
+    id: 'tpl-ppl-push-1',
+    splitGroup: 'PPL',
+    shortLabel: 'Push 1 (Chest)',
+    name: 'PUSH 1 (Chest Focused)',
+    focusSubtitle: '8 exercises • 15-12-10 rep pyramid',
+    exercises: [
+      { exerciseId: 'ex-bench-press', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-incline-db-press', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-decline-cable-cross', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-standing-arnold-press', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-tricep-pushdown', repsPerSet: [15, 12, 20] },
+      { exerciseId: 'ex-eccentric-skullcrusher', repsPerSet: [15, 12, 10] },
+      {
+        exerciseId: 'ex-egyptian-lateral-raise',
+        repsPerSet: [15, 12, 12],
+        note: '+ Myo 4 reps (RR) on last set',
+      },
+      { exerciseId: 'ex-cable-tricep-kickback', repsPerSet: [15, 12, 10] },
+    ],
+  },
+  {
+    id: 'tpl-ppl-pull-1',
+    splitGroup: 'PPL',
+    shortLabel: 'Pull 1 (Lat)',
+    name: 'PULL 1 (Lat Focused)',
+    focusSubtitle: '8 exercises • Lats, Biceps & Forearms',
+    exercises: [
+      { exerciseId: 'ex-scapular-pullups', repsPerSet: [3, 3, 3] },
+      { exerciseId: 'ex-seated-cable-row', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-kneeling-cable-pullover', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-seated-row-machine', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-hammer-cheat-curl', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-incline-db-curl', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-bicep-curl-machine', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-forearm-curls', repsPerSet: [15, 15, 15] },
+    ],
+  },
+  {
+    id: 'tpl-ppl-leg-1',
+    splitGroup: 'PPL',
+    shortLabel: 'Leg 1 (Quad)',
+    name: 'LEG 1 (Quad Focused)',
+    focusSubtitle: '8 exercises • Quads, RDL, Calves & Core',
+    exercises: [
+      { exerciseId: 'ex-deep-squat', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-romanian-deadlift', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-leg-press', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-leg-extension', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-lying-leg-curl', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-standing-calf-raise', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-decline-crunch', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-long-lever-plank', repsPerSet: [30, 30, 30], note: '30 seconds hold per set' },
+    ],
+  },
+  {
+    id: 'tpl-ppl-push-2',
+    splitGroup: 'PPL',
+    shortLabel: 'Push 2 (Delt)',
+    name: 'PUSH 2 (Delt Focused)',
+    focusSubtitle: '6 exercises • Shoulders, Close-Grip & Neck',
+    exercises: [
+      { exerciseId: 'ex-overhead-press', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-close-grip-bench', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-cable-fly', repsPerSet: [15, 12, 12], note: 'Drop set on 3rd set' },
+      { exerciseId: 'ex-overhead-tricep-ext', repsPerSet: [15, 12, 10] },
+      {
+        exerciseId: 'ex-lateral-raise-21s',
+        repsPerSet: [30, 30, 30],
+        note: "21's: 10+10+10 reps per set",
+      },
+      { exerciseId: 'ex-weighted-neck-curl', repsPerSet: [15, 15, 15], note: 'Front and back' },
+    ],
+  },
+  {
+    id: 'tpl-ppl-pull-2',
+    splitGroup: 'PPL',
+    shortLabel: 'Pull 2 (Mid-Back)',
+    name: 'PULL 2 (Mid-Back & Rear Delt Focused)',
+    focusSubtitle: '7 exercises • Pulldown, Sumo DL, Rear Delts & EZ Curls',
+    exercises: [
+      { exerciseId: 'ex-omni-lat-pulldown', repsPerSet: [15, 15, 15] },
+      { exerciseId: 'ex-sumo-deadlift', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-face-pull', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-incline-db-shrug', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-reverse-pec-deck', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-ez-pronated-curl', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-ez-bar-curl', repsPerSet: [15, 12, 10] },
+    ],
+  },
+  {
+    id: 'tpl-ppl-leg-2',
+    splitGroup: 'PPL',
+    shortLabel: 'Leg 2 (Hamstring)',
+    name: 'LEG 2 (Hamstring Focused)',
+    focusSubtitle: '8 exercises • Deadlift, Hack Squat, Nordic & Split Squat',
+    exercises: [
+      { exerciseId: 'ex-deadlift', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-hack-squat', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-single-leg-hip-thrust', repsPerSet: [12, 12, 12] },
+      { exerciseId: 'ex-nordic-ham-curl', repsPerSet: [12, 12, 12] },
+      { exerciseId: 'ex-bulgarian-split-squat', repsPerSet: [12, 12, 12] },
+      { exerciseId: 'ex-calf-tibia-raise', repsPerSet: [12, 12, 12] },
+      { exerciseId: 'ex-bicycle-crunch', repsPerSet: [15, 15, 15] },
+      { exerciseId: 'ex-cable-crunch', repsPerSet: [15, 12, 10] },
+    ],
+  },
+
+  // ==========================================
+  // WEEK B: FULL BODY WORKOUT (DAYS 1 - 5)
+  // ==========================================
+  {
+    id: 'tpl-fb-day-1',
+    splitGroup: 'FULL_BODY',
+    shortLabel: 'Day 1 (Chest FB)',
+    name: 'DAY 1: Chest Focused Full Body',
+    focusSubtitle: '7 exercises • 3 sets × 15-12-10 reps',
+    exercises: [
+      { exerciseId: 'ex-bench-press', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-low-to-high-cable-fly', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-romanian-deadlift', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-chest-supported-tbar-row', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-arnold-press', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-tricep-pushdown', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-smith-shrug', repsPerSet: [15, 12, 10] },
+    ],
+  },
+  {
+    id: 'tpl-fb-day-2',
+    splitGroup: 'FULL_BODY',
+    shortLabel: 'Day 2 (Lower FB)',
+    name: 'DAY 2: Lower Focused Full Body',
+    focusSubtitle: '6 exercises • Squat, Incline DB, Leg Curl & Lat Pulldown',
+    exercises: [
+      { exerciseId: 'ex-squat', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-incline-db-press', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-lying-leg-curl', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-lat-pulldown', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-ez-bar-curl', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-hanging-leg-raise', repsPerSet: [15, 12, 10] },
+    ],
+  },
+  {
+    id: 'tpl-fb-day-3',
+    splitGroup: 'FULL_BODY',
+    shortLabel: 'Day 3 (Back FB)',
+    name: 'DAY 3: Back Focused Full Body',
+    focusSubtitle: '6 exercises • Lat Pulldown, Humble Row, Legs & Arms',
+    exercises: [
+      { exerciseId: 'ex-lat-pulldown', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-humble-row', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-leg-extension', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-standing-calf-raise', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-cable-rope-upright-row', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-hammer-curl', repsPerSet: [15, 12, 10] },
+    ],
+  },
+  {
+    id: 'tpl-fb-day-4',
+    splitGroup: 'FULL_BODY',
+    shortLabel: 'Day 4 (Lower FB)',
+    name: 'DAY 4: Lower Focused Full Body',
+    focusSubtitle: '8 exercises • Reset Deadlift, Close-Grip Bench, GHR & Leg Press',
+    exercises: [
+      { exerciseId: 'ex-reset-deadlift', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-close-grip-bench', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-glute-ham-raise', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-leg-press', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-cable-pullover', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-lateral-raise', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-face-pull', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-skull-crushers', repsPerSet: [15, 12, 10] },
+    ],
+  },
+  {
+    id: 'tpl-fb-day-5',
+    splitGroup: 'FULL_BODY',
+    shortLabel: 'Day 5 (Delt FB)',
+    name: 'DAY 5: Deltoid Focused Full Body',
+    focusSubtitle: '8 exercises • OHP, Egyptian Lateral, Row & Hip Abduction',
+    exercises: [
+      { exerciseId: 'ex-overhead-press', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-egyptian-lateral-raise', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-seated-cable-row', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-hip-abduction', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-incline-db-curl', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-bicycle-crunch', repsPerSet: [20, 20, 20] },
+      { exerciseId: 'ex-standing-calf-raise', repsPerSet: [15, 12, 10] },
+      { exerciseId: 'ex-pushups', repsPerSet: [10, 10, 10] },
+    ],
+  },
+
+  // ==========================================
+  // BOXING HIIT CONDITIONING
+  // ==========================================
+  {
+    id: 'tpl-boxing-hiit',
+    splitGroup: 'BOXING_HIIT',
+    shortLabel: 'Boxing HIIT Drill',
+    name: 'Intense Boxing HIIT Drill',
+    focusSubtitle: '5m Warm-Up + 3× Circuit (40s work / 20s rest)',
+    exercises: [
+      { exerciseId: 'ex-jump-rope', repsPerSet: [120], note: 'Warm-up: 2 minutes (120s)' },
+      { exerciseId: 'ex-dynamic-stretching', repsPerSet: [60], note: 'Warm-up: 1 minute (60s)' },
+      {
+        exerciseId: 'ex-shadow-boxing-high-knees',
+        repsPerSet: [120],
+        note: 'Warm-up: 2 minutes (120s)',
+      },
+      {
+        exerciseId: 'ex-battle-rope-slams',
+        repsPerSet: [40, 40, 40],
+        note: '40s explosive power / 20s rest',
+      },
+      {
+        exerciseId: 'ex-tire-flips',
+        repsPerSet: [40, 40, 40],
+        note: '40s fast & safe flips / 20s rest',
+      },
+      {
+        exerciseId: 'ex-sledgehammer-slams',
+        repsPerSet: [40, 40, 40],
+        note: '40s alternating hands / 20s rest',
+      },
+      {
+        exerciseId: 'ex-boxing-burpees',
+        repsPerSet: [40, 40, 40],
+        note: 'Jab-Cross-Hook-Uppercut + Burpee (40s / 20s rest)',
+      },
+    ],
+  },
 ];
 
 export async function ensureSeedData(): Promise<void> {
-  // Always ensure the 65+ built-in exercises exist in IndexedDB
   await db.exercises.bulkPut(SEED_EXERCISES);
 
   const existingCount = await db.profiles.count();
   if (existingCount >= 4) return;
 
   const syncMeta = createSyncMeta('synced');
+  const nowIso = new Date().toISOString();
 
   const members: ChallengeMember[] = [
-    { ...syncMeta, id: 'cm-wa-harsh', challenge_id: 'challenge-winter-arc', user_id: 'user-harsh', role: 'owner', joined_at: '2026-09-18T10:00:00Z', status: 'active' },
-    { ...syncMeta, id: 'cm-wa-pranav', challenge_id: 'challenge-winter-arc', user_id: 'user-pranav', role: 'admin', joined_at: '2026-09-18T11:00:00Z', status: 'active' },
-    { ...syncMeta, id: 'cm-wa-kavi', challenge_id: 'challenge-winter-arc', user_id: 'user-kavi', role: 'member', joined_at: '2026-09-18T12:00:00Z', status: 'active' },
-    { ...syncMeta, id: 'cm-wa-vijay', challenge_id: 'challenge-winter-arc', user_id: 'user-vijay', role: 'member', joined_at: '2026-09-18T12:30:00Z', status: 'active' },
+    { ...syncMeta, id: 'cm-wa-harsh', challenge_id: 'challenge-winter-arc', user_id: 'user-harsh', role: 'owner', joined_at: nowIso, status: 'active' },
+    { ...syncMeta, id: 'cm-wa-pranav', challenge_id: 'challenge-winter-arc', user_id: 'user-pranav', role: 'admin', joined_at: nowIso, status: 'active' },
+    { ...syncMeta, id: 'cm-wa-kavi', challenge_id: 'challenge-winter-arc', user_id: 'user-kavi', role: 'member', joined_at: nowIso, status: 'active' },
+    { ...syncMeta, id: 'cm-wa-vijay', challenge_id: 'challenge-winter-arc', user_id: 'user-vijay', role: 'member', joined_at: nowIso, status: 'active' },
   ];
 
   const invites: ChallengeInvite[] = [
@@ -295,308 +530,12 @@ export async function ensureSeedData(): Promise<void> {
       ...syncMeta,
       id: 'inv-wa-1',
       challenge_id: 'challenge-winter-arc',
-      invite_code: 'WINTER-ARC-42',
+      invite_code: 'WINTER-ARC',
       created_by: 'user-harsh',
       expires_at: '2027-12-31T23:59:59Z',
       max_uses: 25,
-      uses: 3,
+      uses: 4,
     },
-  ];
-
-  // Clear strength progression history for Harsh, Pranav, and Kavi across 4 weeks
-  // so each athlete can see their lifting weights increasing over time!
-  const workouts: Workout[] = [];
-  const workoutExercises: WorkoutExercise[] = [];
-  const sets: WorkoutSet[] = [];
-
-  const progressionConfigs = [
-    {
-      userId: 'user-harsh',
-      sessions: [
-        { date: '2026-09-20', name: 'Chest & Shoulders', bench: 55, squat: 85, deadlift: 105, ohp: 35 },
-        { date: '2026-09-25', name: 'Full Body Strength', bench: 60, squat: 90, deadlift: 112.5, ohp: 37.5 },
-        { date: '2026-10-01', name: 'Upper & Lower Heavy', bench: 62.5, squat: 95, deadlift: 120, ohp: 40 },
-        { date: '2026-10-05', name: 'Strength Session', bench: 65, squat: 100, deadlift: 125, ohp: 42.5 },
-        { date: DEMO_TODAY, name: "Today's Workout", bench: 67.5, squat: 105, deadlift: 130, ohp: 45 },
-      ],
-    },
-    {
-      userId: 'user-pranav',
-      sessions: [
-        { date: '2026-09-20', name: 'Strength Session', bench: 50, squat: 75, deadlift: 95, ohp: 30 },
-        { date: '2026-09-26', name: 'Compound Lifts', bench: 52.5, squat: 80, deadlift: 100, ohp: 32.5 },
-        { date: '2026-10-02', name: 'Heavy Day', bench: 57.5, squat: 85, deadlift: 107.5, ohp: 35 },
-        { date: DEMO_TODAY, name: "Today's Workout", bench: 60, squat: 90, deadlift: 115, ohp: 37.5 },
-      ],
-    },
-    {
-      userId: 'user-kavi',
-      sessions: [
-        { date: '2026-09-21', name: 'Strength Session', bench: 45, squat: 70, deadlift: 90, ohp: 27.5 },
-        { date: '2026-09-28', name: 'Compound Lifts', bench: 47.5, squat: 75, deadlift: 95, ohp: 30 },
-        { date: '2026-10-04', name: 'Full Body', bench: 52.5, squat: 82.5, deadlift: 102.5, ohp: 32.5 },
-        { date: DEMO_TODAY, name: "Today's Workout", bench: 55, squat: 87.5, deadlift: 110, ohp: 35 },
-      ],
-    },
-    {
-      userId: 'user-vijay',
-      sessions: [
-        { date: '2026-09-21', name: 'Strength Session', bench: 52.5, squat: 80, deadlift: 100, ohp: 32.5 },
-        { date: '2026-09-27', name: 'Compound Lifts', bench: 55, squat: 85, deadlift: 107.5, ohp: 35 },
-        { date: '2026-10-03', name: 'Heavy Day', bench: 60, squat: 92.5, deadlift: 115, ohp: 37.5 },
-        { date: DEMO_TODAY, name: "Today's Workout", bench: 62.5, squat: 97.5, deadlift: 122.5, ohp: 40 },
-      ],
-    },
-  ];
-
-  for (const userCfg of progressionConfigs) {
-    userCfg.sessions.forEach((sess, idx) => {
-      const wId = `w-${userCfg.userId}-${idx + 1}`;
-      workouts.push({
-        ...syncMeta,
-        id: wId,
-        user_id: userCfg.userId,
-        challenge_id: 'challenge-winter-arc',
-        workout_date: sess.date,
-        name: sess.name,
-        duration_minutes: 50,
-        notes: 'Felt strong. Increased weights.',
-        completed: true,
-        created_at: `${sess.date}T07:30:00Z`,
-        updated_at: `${sess.date}T08:20:00Z`,
-      });
-
-      const lifts = [
-        { exId: 'ex-bench-press', weight: sess.bench, reps: 8 },
-        { exId: 'ex-squat', weight: sess.squat, reps: 6 },
-        { exId: 'ex-deadlift', weight: sess.deadlift, reps: 5 },
-        { exId: 'ex-overhead-press', weight: sess.ohp, reps: 8 },
-      ];
-
-      lifts.forEach((lift, lIdx) => {
-        const weId = `we-${wId}-${lift.exId}`;
-        workoutExercises.push({
-          ...syncMeta,
-          id: weId,
-          workout_id: wId,
-          exercise_id: lift.exId,
-          order_index: lIdx,
-          notes: '',
-        });
-
-        sets.push(
-          {
-            ...syncMeta,
-            id: `s-${weId}-1`,
-            workout_exercise_id: weId,
-            set_number: 1,
-            weight: lift.weight - 2.5,
-            weight_unit: 'kg',
-            reps: lift.reps,
-            rpe: 8,
-            rir: 2,
-            duration_seconds: null,
-            distance: null,
-            completed: true,
-          },
-          {
-            ...syncMeta,
-            id: `s-${weId}-2`,
-            workout_exercise_id: weId,
-            set_number: 2,
-            weight: lift.weight,
-            weight_unit: 'kg',
-            reps: lift.reps,
-            rpe: 8.5,
-            rir: 1,
-            duration_seconds: null,
-            distance: null,
-            completed: true,
-          }
-        );
-      });
-    });
-  }
-
-  // Simple "What I Ate Today" logs (no complicated macro counting required)
-  const dietLogs: DietLog[] = [
-    {
-      ...syncMeta,
-      id: 'diet-harsh-1',
-      user_id: 'user-harsh',
-      challenge_id: 'challenge-winter-arc',
-      date: DEMO_TODAY,
-      meal_type: 'Breakfast',
-      description: '4 Boiled eggs, oats with milk & 1 banana',
-      calories: 560,
-      protein: 32,
-      carbs: 60,
-      fat: 18,
-      photo_url: null,
-      notes: '',
-      created_at: '2026-10-07T07:00:00Z',
-    },
-    {
-      ...syncMeta,
-      id: 'diet-harsh-2',
-      user_id: 'user-harsh',
-      challenge_id: 'challenge-winter-arc',
-      date: DEMO_TODAY,
-      meal_type: 'Lunch',
-      description: 'Grilled chicken breast, white rice & cucumber salad',
-      calories: 720,
-      protein: 60,
-      carbs: 80,
-      fat: 20,
-      photo_url: null,
-      notes: '',
-      created_at: '2026-10-07T13:00:00Z',
-    },
-    {
-      ...syncMeta,
-      id: 'diet-harsh-3',
-      user_id: 'user-harsh',
-      challenge_id: 'challenge-winter-arc',
-      date: DEMO_TODAY,
-      meal_type: 'Snack',
-      description: '1 scoop whey protein & handful of almonds',
-      calories: 280,
-      protein: 28,
-      carbs: 12,
-      fat: 14,
-      photo_url: null,
-      notes: '',
-      created_at: '2026-10-07T17:00:00Z',
-    },
-    {
-      ...syncMeta,
-      id: 'diet-harsh-4',
-      user_id: 'user-harsh',
-      challenge_id: 'challenge-winter-arc',
-      date: DEMO_TODAY,
-      meal_type: 'Dinner',
-      description: 'Paneer / chicken stir-fry with 2 chapatis',
-      calories: 490,
-      protein: 40,
-      carbs: 45,
-      fat: 14,
-      photo_url: null,
-      notes: '',
-      created_at: '2026-10-07T20:30:00Z',
-    },
-    {
-      ...syncMeta,
-      id: 'diet-pranav-1',
-      user_id: 'user-pranav',
-      challenge_id: 'challenge-winter-arc',
-      date: DEMO_TODAY,
-      meal_type: 'Breakfast',
-      description: '3 eggs omelette, peanut butter toast & black coffee',
-      calories: 550,
-      protein: 30,
-      carbs: 45,
-      fat: 22,
-      photo_url: null,
-      notes: '',
-      created_at: '2026-10-07T08:00:00Z',
-    },
-    {
-      ...syncMeta,
-      id: 'diet-pranav-2',
-      user_id: 'user-pranav',
-      challenge_id: 'challenge-winter-arc',
-      date: DEMO_TODAY,
-      meal_type: 'Lunch',
-      description: 'Rice, dal, curd & 200g chicken curry',
-      calories: 700,
-      protein: 50,
-      carbs: 75,
-      fat: 18,
-      photo_url: null,
-      notes: '',
-      created_at: '2026-10-07T13:30:00Z',
-    },
-    {
-      ...syncMeta,
-      id: 'diet-kavi-1',
-      user_id: 'user-kavi',
-      challenge_id: 'challenge-winter-arc',
-      date: DEMO_TODAY,
-      meal_type: 'Breakfast',
-      description: 'Overnight protein oats with chia seeds & apple',
-      calories: 480,
-      protein: 32,
-      carbs: 58,
-      fat: 12,
-      photo_url: null,
-      notes: '',
-      created_at: '2026-10-07T08:15:00Z',
-    },
-    {
-      ...syncMeta,
-      id: 'diet-vijay-1',
-      user_id: 'user-vijay',
-      challenge_id: 'challenge-winter-arc',
-      date: DEMO_TODAY,
-      meal_type: 'Breakfast',
-      description: '4 Boiled eggs, 2 multigrain toast & banana',
-      calories: 520,
-      protein: 30,
-      carbs: 52,
-      fat: 16,
-      photo_url: null,
-      notes: '',
-      created_at: '2026-10-07T08:25:00Z',
-    },
-    {
-      ...syncMeta,
-      id: 'diet-vijay-2',
-      user_id: 'user-vijay',
-      challenge_id: 'challenge-winter-arc',
-      date: DEMO_TODAY,
-      meal_type: 'Lunch',
-      description: '3 Chapati, paneer bhurji, dal & curd',
-      calories: 680,
-      protein: 42,
-      carbs: 68,
-      fat: 20,
-      photo_url: null,
-      notes: '',
-      created_at: '2026-10-07T13:45:00Z',
-    },
-  ];
-
-  // Body Weight History for Harsh, Pranav, Kavi, and Vijay
-  const bodyMetrics: BodyMetric[] = [
-    // Harsh: 84.5 kg -> 82.0 kg
-    { ...syncMeta, id: 'bm-h-1', user_id: 'user-harsh', date: '2026-09-18', weight: 84.5, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8000, notes: 'Week 1' },
-    { ...syncMeta, id: 'bm-h-2', user_id: 'user-harsh', date: '2026-09-25', weight: 83.6, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8200, notes: 'Week 2' },
-    { ...syncMeta, id: 'bm-h-3', user_id: 'user-harsh', date: '2026-10-02', weight: 82.8, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8500, notes: 'Week 3' },
-    { ...syncMeta, id: 'bm-h-4', user_id: 'user-harsh', date: DEMO_TODAY, weight: 82.0, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 2.5, steps: 6400, notes: 'Today' },
-    // Pranav: 74.5 kg -> 76.5 kg (Lean bulk)
-    { ...syncMeta, id: 'bm-p-1', user_id: 'user-pranav', date: '2026-09-18', weight: 74.5, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 7500, notes: 'Week 1' },
-    { ...syncMeta, id: 'bm-p-2', user_id: 'user-pranav', date: '2026-09-25', weight: 75.2, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 7800, notes: 'Week 2' },
-    { ...syncMeta, id: 'bm-p-3', user_id: 'user-pranav', date: '2026-10-02', weight: 75.9, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8000, notes: 'Week 3' },
-    { ...syncMeta, id: 'bm-p-4', user_id: 'user-pranav', date: DEMO_TODAY, weight: 76.5, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 2.8, steps: 7100, notes: 'Today' },
-    // Kavi: 75.8 kg -> 74.0 kg
-    { ...syncMeta, id: 'bm-k-1', user_id: 'user-kavi', date: '2026-09-18', weight: 75.8, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 2.8, steps: 8000, notes: 'Week 1' },
-    { ...syncMeta, id: 'bm-k-2', user_id: 'user-kavi', date: '2026-09-25', weight: 75.1, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 2.9, steps: 8300, notes: 'Week 2' },
-    { ...syncMeta, id: 'bm-k-3', user_id: 'user-kavi', date: '2026-10-02', weight: 74.5, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8600, notes: 'Week 3' },
-    { ...syncMeta, id: 'bm-k-4', user_id: 'user-kavi', date: DEMO_TODAY, weight: 74.0, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 2.6, steps: 7900, notes: 'Today' },
-    // Vijay: 79.5 kg -> 78.0 kg
-    { ...syncMeta, id: 'bm-v-1', user_id: 'user-vijay', date: '2026-09-18', weight: 79.5, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8100, notes: 'Week 1' },
-    { ...syncMeta, id: 'bm-v-2', user_id: 'user-vijay', date: '2026-09-25', weight: 79.0, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.0, steps: 8400, notes: 'Week 2' },
-    { ...syncMeta, id: 'bm-v-3', user_id: 'user-vijay', date: '2026-10-02', weight: 78.4, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 3.1, steps: 8700, notes: 'Week 3' },
-    { ...syncMeta, id: 'bm-v-4', user_id: 'user-vijay', date: DEMO_TODAY, weight: 78.0, body_fat_percentage: null, waist: null, chest: null, arms: null, thighs: null, water_liters: 2.8, steps: 8200, notes: 'Today' },
-  ];
-
-  const personalRecords: PersonalRecord[] = [
-    { ...syncMeta, id: 'pr-h-bench', user_id: 'user-harsh', exercise_id: 'ex-bench-press', weight: 67.5, reps: 8, estimated_1rm: 85.5, pr_type: 'max_weight', achieved_at: '2026-10-07T08:00:00Z' },
-    { ...syncMeta, id: 'pr-h-squat', user_id: 'user-harsh', exercise_id: 'ex-squat', weight: 105, reps: 6, estimated_1rm: 126, pr_type: 'max_weight', achieved_at: '2026-10-07T08:00:00Z' },
-    { ...syncMeta, id: 'pr-h-deadlift', user_id: 'user-harsh', exercise_id: 'ex-deadlift', weight: 130, reps: 5, estimated_1rm: 151.7, pr_type: 'max_weight', achieved_at: '2026-10-07T08:00:00Z' },
-    { ...syncMeta, id: 'pr-p-bench', user_id: 'user-pranav', exercise_id: 'ex-bench-press', weight: 60, reps: 8, estimated_1rm: 76, pr_type: 'max_weight', achieved_at: '2026-10-07T08:00:00Z' },
-    { ...syncMeta, id: 'pr-k-bench', user_id: 'user-kavi', exercise_id: 'ex-bench-press', weight: 55, reps: 8, estimated_1rm: 69.7, pr_type: 'max_weight', achieved_at: '2026-10-07T08:00:00Z' },
-    { ...syncMeta, id: 'pr-v-bench', user_id: 'user-vijay', exercise_id: 'ex-bench-press', weight: 62.5, reps: 8, estimated_1rm: 79.2, pr_type: 'max_weight', achieved_at: '2026-10-07T08:00:00Z' },
   ];
 
   await db.transaction(
@@ -606,26 +545,12 @@ export async function ensureSeedData(): Promise<void> {
       db.cached_challenges,
       db.challenge_members,
       db.challenge_invites,
-      db.exercises,
-      db.workouts,
-      db.workout_exercises,
-      db.sets,
-      db.diet_logs,
-      db.body_metrics,
-      db.personal_records,
     ],
     async () => {
       await db.profiles.bulkPut(SEED_PROFILES);
       await db.cached_challenges.bulkPut(SEED_CHALLENGES);
       await db.challenge_members.bulkPut(members);
       await db.challenge_invites.bulkPut(invites);
-      await db.exercises.bulkPut(SEED_EXERCISES);
-      await db.workouts.bulkPut(workouts);
-      await db.workout_exercises.bulkPut(workoutExercises);
-      await db.sets.bulkPut(sets);
-      await db.diet_logs.bulkPut(dietLogs);
-      await db.body_metrics.bulkPut(bodyMetrics);
-      await db.personal_records.bulkPut(personalRecords);
     }
   );
 }

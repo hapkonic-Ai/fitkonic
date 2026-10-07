@@ -152,10 +152,10 @@ export function CalendarScreen() {
         </div>
       </div>
 
-      {/* Selected Day Drilldown (Matches Screen 7 of UI Reference: Tue, 7 Oct) */}
+      {/* Selected Day Drilldown */}
       <div className="space-y-3">
         <h3 className="font-display font-bold text-base text-[#F5F7FA]">
-          {selectedDate === DEMO_TODAY ? 'Tue, 7 Oct' : selectedDate}
+          {selectedDate === DEMO_TODAY ? `Today (${selectedDate})` : selectedDate}
         </h3>
 
         <div className="bg-[#0D1117] border border-[#202A35] rounded-2xl divide-y divide-[#202A35]">
@@ -169,16 +169,16 @@ export function CalendarScreen() {
               </div>
               <div>
                 <p className="font-display font-bold text-sm text-[#F5F7FA]">
-                  {data.dayWorkouts[0]?.name || 'Upper Body'}
+                  {data.dayWorkouts[0]?.name || 'No workout logged'}
                 </p>
                 <p className="text-xs text-[#8B98A8]">
                   {data.dayWorkouts.length > 0
                     ? `${data.dayWorkouts[0].duration_minutes} mins • Completed`
-                    : 'Planned Session • Tap to start'}
+                    : 'Tap to log workout for this date'}
                 </p>
               </div>
             </div>
-            <span className="text-xs font-semibold text-[#5EC8FF]">View</span>
+            <span className="text-xs font-semibold text-[#5EC8FF]">Open</span>
           </div>
 
           <div
@@ -190,10 +190,10 @@ export function CalendarScreen() {
                 <Utensils className="w-5 h-5" />
               </div>
               <div>
-                <p className="font-display font-bold text-sm text-[#F5F7FA]">Log Diet</p>
+                <p className="font-display font-bold text-sm text-[#F5F7FA]">Food Log</p>
                 <p className="text-xs text-[#8B98A8]">
-                  {data.dayDietTotals.calories > 0
-                    ? `${data.dayDietTotals.calories} kcal • ${data.dayDietTotals.protein}g Protein`
+                  {data.dayMeals.length > 0
+                    ? data.dayMeals.map((m) => `${m.meal_type}: ${m.description}`).join(' • ')
                     : 'No meals logged on this date'}
                 </p>
               </div>
@@ -208,14 +208,16 @@ export function CalendarScreen() {
               </div>
               <div>
                 <p className="font-display font-bold text-sm text-[#F5F7FA]">
-                  {data.dayMetric?.water_liters ?? 2.1} / 3 L Water
+                  Body Weight Check-In
                 </p>
-                <p className="text-xs text-[#8B98A8]">Daily Hydration Target</p>
+                <p className="text-xs text-[#8B98A8]">Daily Weight Record</p>
               </div>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-[#8B98A8]">
               <Scale className="w-3.5 h-3.5 text-[#5EC8FF]" />
-              <span>{data.dayMetric?.weight ?? 130.2} kg</span>
+              <span>
+                {data.dayMetric?.weight ? `${data.dayMetric.weight} kg` : 'Not logged'}
+              </span>
             </div>
           </div>
         </div>

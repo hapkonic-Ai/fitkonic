@@ -195,17 +195,20 @@ export function ProgressScreen() {
 
   const startBodyWeight =
     data.userMetrics.length > 0
-      ? (data.userMetrics[0].weight ?? data.currentUser?.weight ?? 80)
-      : (data.currentUser?.weight ?? 80);
+      ? (data.userMetrics[0].weight ?? data.currentUser?.weight ?? null)
+      : (data.currentUser?.weight ?? null);
 
   const currentBodyWeight =
     data.userMetrics.length > 0
       ? (data.userMetrics[data.userMetrics.length - 1].weight ??
           data.currentUser?.weight ??
-          80)
-      : (data.currentUser?.weight ?? 80);
+          null)
+      : (data.currentUser?.weight ?? null);
 
-  const bodyWeightDiff = Number((currentBodyWeight - startBodyWeight).toFixed(1));
+  const bodyWeightDiff =
+    startBodyWeight && currentBodyWeight
+      ? Number((currentBodyWeight - startBodyWeight).toFixed(1))
+      : 0;
 
   const handleSaveWeight = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -294,68 +297,79 @@ export function ProgressScreen() {
         </div>
 
         {/* Cards for Each Exercise Showing Start Weight -> Current Weight (+Increase) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {data.userStrengthList.map((lift) => {
-            const isSelected = activeLift?.exerciseId === lift.exerciseId;
-            return (
-              <button
-                key={lift.exerciseId}
-                type="button"
-                data-testid={`lift-card-${lift.exerciseId}`}
-                onClick={() => setSelectedExerciseId(lift.exerciseId)}
-                className={`text-left rounded-xl border p-4 transition-all space-y-2.5 ${
-                  isSelected
-                    ? 'bg-[#121821] border-[#5EC8FF] shadow-[0_0_20px_rgba(94,200,255,0.12)]'
-                    : 'bg-[#121821]/60 border-[#202A35] hover:border-[#5EC8FF]/40'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-display font-bold text-[#F5F7FA]">
-                    {lift.exerciseName}
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-full bg-[#4ADE80]/15 border border-[#4ADE80]/40 text-xs font-display font-bold text-[#4ADE80] flex items-center gap-0.5">
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                    {lift.increaseKg >= 0 ? `+${lift.increaseKg} kg` : `${lift.increaseKg} kg`}
-                  </span>
-                </div>
-
-                <div className="flex items-baseline gap-2">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-wider text-[#8B98A8] block">
-                      Started At
+        {data.userStrengthList.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-[#202A35] bg-[#121821]/40 p-6 text-center space-y-1.5">
+            <p className="text-sm font-display font-bold text-[#F5F7FA]">
+              Day 1 of Winter Arc — No lifts logged yet for {data.currentUser?.display_name}
+            </p>
+            <p className="text-xs text-[#8B98A8]">
+              Log today&apos;s PPL or Full Body workout to start tracking your lifting weight progression!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {data.userStrengthList.map((lift) => {
+              const isSelected = activeLift?.exerciseId === lift.exerciseId;
+              return (
+                <button
+                  key={lift.exerciseId}
+                  type="button"
+                  data-testid={`lift-card-${lift.exerciseId}`}
+                  onClick={() => setSelectedExerciseId(lift.exerciseId)}
+                  className={`text-left rounded-xl border p-4 transition-all space-y-2.5 ${
+                    isSelected
+                      ? 'bg-[#121821] border-[#5EC8FF] shadow-[0_0_20px_rgba(94,200,255,0.12)]'
+                      : 'bg-[#121821]/60 border-[#202A35] hover:border-[#5EC8FF]/40'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-display font-bold text-[#F5F7FA]">
+                      {lift.exerciseName}
                     </span>
-                    <span className="text-base font-display font-semibold text-[#8B98A8]">
-                      {lift.startWeight} kg
-                    </span>
-                  </div>
-                  <span className="text-[#5EC8FF] font-display font-bold">→</span>
-                  <div>
-                    <span className="text-[10px] uppercase tracking-wider text-[#5EC8FF] block">
-                      Current Lift
-                    </span>
-                    <span className="text-xl font-display font-bold text-[#F5F7FA]">
-                      {lift.currentWeight} kg
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#4ADE80]/15 border border-[#4ADE80]/40 text-xs font-display font-bold text-[#4ADE80] flex items-center gap-0.5">
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                      {lift.increaseKg >= 0 ? `+${lift.increaseKg} kg` : `${lift.increaseKg} kg`}
                     </span>
                   </div>
-                </div>
 
-                {/* Session-by-session weight history pills */}
-                <div className="flex flex-wrap items-center gap-1 pt-1">
-                  {lift.sessions.map((s, idx) => (
-                    <React.Fragment key={s.date}>
-                      <span className="px-2 py-0.5 rounded bg-[#0D1117] border border-[#202A35] text-[11px] font-display text-[#F5F7FA]">
-                        {s.weight}kg
+                  <div className="flex items-baseline gap-2">
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-[#8B98A8] block">
+                        Started At
                       </span>
-                      {idx < lift.sessions.length - 1 && (
-                        <span className="text-[10px] text-[#8B98A8]">→</span>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                      <span className="text-base font-display font-semibold text-[#8B98A8]">
+                        {lift.startWeight} kg
+                      </span>
+                    </div>
+                    <span className="text-[#5EC8FF] font-display font-bold">→</span>
+                    <div>
+                      <span className="text-[10px] uppercase tracking-wider text-[#5EC8FF] block">
+                        Current Lift
+                      </span>
+                      <span className="text-xl font-display font-bold text-[#F5F7FA]">
+                        {lift.currentWeight} kg
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Session-by-session weight history pills */}
+                  <div className="flex flex-wrap items-center gap-1 pt-1">
+                    {lift.sessions.map((s, idx) => (
+                      <React.Fragment key={s.date}>
+                        <span className="px-2 py-0.5 rounded bg-[#0D1117] border border-[#202A35] text-[11px] font-display text-[#F5F7FA]">
+                          {s.weight}kg
+                        </span>
+                        {idx < lift.sessions.length - 1 && (
+                          <span className="text-[10px] text-[#8B98A8]">→</span>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Selected Lift Chart */}
         {activeLift && (
@@ -437,13 +451,21 @@ export function ProgressScreen() {
               </span>
               <h2 className="text-base font-display font-bold text-[#F5F7FA]">
                 {data.currentUser?.display_name}&apos;s Body Weight:{' '}
-                <span className="text-[#5EC8FF]">{currentBodyWeight} kg</span>
+                <span className="text-[#5EC8FF]">
+                  {currentBodyWeight ? `${currentBodyWeight} kg` : 'Not logged yet'}
+                </span>
               </h2>
               <p className="text-xs text-[#8B98A8]">
-                Started at {startBodyWeight} kg • Change:{' '}
-                <strong className="text-[#F5F7FA]">
-                  {bodyWeightDiff > 0 ? `+${bodyWeightDiff}` : bodyWeightDiff} kg
-                </strong>
+                {startBodyWeight && currentBodyWeight ? (
+                  <>
+                    Started at {startBodyWeight} kg • Change:{' '}
+                    <strong className="text-[#F5F7FA]">
+                      {bodyWeightDiff > 0 ? `+${bodyWeightDiff}` : bodyWeightDiff} kg
+                    </strong>
+                  </>
+                ) : (
+                  'Enter your Day 1 starting body weight on the right'
+                )}
               </p>
             </div>
           </div>
@@ -457,7 +479,7 @@ export function ProgressScreen() {
               data-testid="progress-weight-input"
               value={weightInput}
               onChange={(e) => setWeightInput(e.target.value)}
-              placeholder={`Today (${currentBodyWeight} kg)`}
+              placeholder={currentBodyWeight ? `Today (${currentBodyWeight} kg)` : 'Weight in kg'}
               className="w-36 h-10 rounded-xl bg-[#121821] border border-[#202A35] px-3 text-xs font-display font-bold text-[#F5F7FA] focus:outline-none focus:border-[#5EC8FF]"
             />
             <button
@@ -473,62 +495,66 @@ export function ProgressScreen() {
         </div>
 
         {/* Body Weight Chart */}
-        <div className="h-48 w-full rounded-xl border border-[#202A35] bg-[#121821]/60 p-3">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={data.userMetrics.map((m) => ({
-                date: m.date.slice(5),
-                weight: m.weight,
-              }))}
-            >
-              <defs>
-                <linearGradient id="bwGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4ADE80" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#4ADE80" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#202A35" />
-              <XAxis dataKey="date" stroke="#8B98A8" fontSize={11} tickLine={false} />
-              <YAxis
-                stroke="#8B98A8"
-                fontSize={11}
-                tickLine={false}
-                domain={['dataMin - 2', 'dataMax + 2']}
-                unit=" kg"
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#0D1117',
-                  borderColor: '#202A35',
-                  borderRadius: '12px',
-                  color: '#F5F7FA',
-                  fontSize: '12px',
-                }}
-                formatter={(value: number) => [`${value} kg`, 'Body Weight']}
-              />
-              <Area
-                type="monotone"
-                dataKey="weight"
-                stroke="#4ADE80"
-                strokeWidth={2.5}
-                fill="url(#bwGrad)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
+        {data.userMetrics.length > 0 && (
+          <div className="h-48 w-full rounded-xl border border-[#202A35] bg-[#121821]/60 p-3">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={data.userMetrics.map((m) => ({
+                  date: m.date.slice(5),
+                  weight: m.weight,
+                }))}
+              >
+                <defs>
+                  <linearGradient id="bwGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#4ADE80" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#4ADE80" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#202A35" />
+                <XAxis dataKey="date" stroke="#8B98A8" fontSize={11} tickLine={false} />
+                <YAxis
+                  stroke="#8B98A8"
+                  fontSize={11}
+                  tickLine={false}
+                  domain={['dataMin - 2', 'dataMax + 2']}
+                  unit=" kg"
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#0D1117',
+                    borderColor: '#202A35',
+                    borderRadius: '12px',
+                    color: '#F5F7FA',
+                    fontSize: '12px',
+                  }}
+                  formatter={(value: number) => [`${value} kg`, 'Body Weight']}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="weight"
+                  stroke="#4ADE80"
+                  strokeWidth={2.5}
+                  fill="url(#bwGrad)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
 
         {/* Body Weight History Pills */}
-        <div className="flex flex-wrap gap-2">
-          {data.userMetrics.map((m) => (
-            <div
-              key={m.id}
-              className="px-3 py-1.5 rounded-xl bg-[#121821] border border-[#202A35] text-xs flex items-center gap-2"
-            >
-              <span className="text-[#8B98A8]">{m.date.slice(5)}:</span>
-              <strong className="font-display text-[#F5F7FA]">{m.weight} kg</strong>
-            </div>
-          ))}
-        </div>
+        {data.userMetrics.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {data.userMetrics.map((m) => (
+              <div
+                key={m.id}
+                className="px-3 py-1.5 rounded-xl bg-[#121821] border border-[#202A35] text-xs flex items-center gap-2"
+              >
+                <span className="text-[#8B98A8]">{m.date.slice(5)}:</span>
+                <strong className="font-display text-[#F5F7FA]">{m.weight} kg</strong>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* SECTION 3: HARSH VS PRANAV VS KAVI VS VIJAY COMPARISON */}
@@ -562,7 +588,9 @@ export function ProgressScreen() {
                     <div className="text-[11px] text-[#8B98A8]">
                       Body Weight:{' '}
                       <strong className="text-[#F5F7FA]">
-                        {item.startBodyWeight} → {item.currentBodyWeight} kg
+                        {item.currentBodyWeight
+                          ? `${item.startBodyWeight} → ${item.currentBodyWeight} kg`
+                          : '—'}
                       </strong>
                     </div>
                   </div>

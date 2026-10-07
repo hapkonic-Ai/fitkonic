@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
   Check,
   CheckCircle2,
   Dumbbell,
+  Flame,
   History,
+  Layers,
   Plus,
   Search,
   Trash2,
@@ -13,7 +15,11 @@ import {
   X,
 } from 'lucide-react';
 import { db } from '@/db/dexie';
-import { DEMO_TODAY } from '@/db/seed';
+import {
+  DEMO_TODAY,
+  SQUAD_WORKOUT_TEMPLATES,
+  type SquadWorkoutTemplate,
+} from '@/db/seed';
 import {
   useAppStore,
   type ActiveDraftExercise,
@@ -35,6 +41,7 @@ const MUSCLE_FILTERS = [
   'Biceps',
   'Triceps',
   'Core',
+  'Cardio',
 ] as const;
 
 export function WorkoutLoggerScreen() {
@@ -52,12 +59,15 @@ export function WorkoutLoggerScreen() {
 
   const uid = currentUserId || 'user-harsh';
 
+  // Split Mode Tab: PPL Week vs Full Body Week vs Boxing HIIT
+  const [splitTab, setSplitTab] = useState<'PPL' | 'FULL_BODY' | 'BOXING_HIIT'>('PPL');
+
   // Search & 1-Step Quick Entry State
   const [searchQuery, setSearchQuery] = useState('');
-  const [muscleFilter, setMuscleFilter] = useState<(typeof MUSCLE_FILTERS)[number]>('Recent');
+  const [muscleFilter, setMuscleFilter] = useState<(typeof MUSCLE_FILTERS)[number]>('All');
   const [selectedExerciseId, setSelectedExerciseId] = useState<string>('ex-bench-press');
-  const [entryWeight, setEntryWeight] = useState<string>('60');
-  const [entryReps, setEntryReps] = useState<string>('8');
+  const [entryWeight, setEntryWeight] = useState<string>('40');
+  const [entryReps, setEntryReps] = useState<string>('12');
   const [entrySetsCount, setEntrySetsCount] = useState<number>(3);
   const [saving, setSaving] = useState(false);
 
@@ -149,7 +159,7 @@ export function WorkoutLoggerScreen() {
             ex.muscle_group.toLowerCase().includes(q) ||
             ex.equipment.toLowerCase().includes(q)
         )
-        .slice(0, 15);
+        .slice(0, 18);
     }
 
     if (muscleFilter === 'Recent') {
@@ -157,8 +167,8 @@ export function WorkoutLoggerScreen() {
       const recentItems = data.recentExerciseIds
         .map((id) => list.find((e) => e.id === id))
         .filter((e): e is NonNullable<typeof e> => Boolean(e));
-      const fallback = list.filter((e) => !recentSet.has(e.id)).slice(0, 6);
-      return [...recentItems, ...fallback].slice(0, 8);
+      const fallback = list.filter((e) => !recentSet.has(e.id)).slice(0, 8);
+      return [...recentItems, ...fallback].slice(0, 10);
     }
 
     if (muscleFilter !== 'All') {
@@ -167,7 +177,7 @@ export function WorkoutLoggerScreen() {
       );
     }
 
-    return list.slice(0, 15);
+    return list.slice(0, 18);
   }, [data?.exercises, data?.recentExerciseIds, searchQuery, muscleFilter]);
 
   if (!data) {
@@ -176,6 +186,9 @@ export function WorkoutLoggerScreen() {
 
   const selectedExercise = data.exercises.find((e) => e.id === selectedExerciseId);
   const selectedPrevBest = data.bestLiftByExercise.get(selectedExerciseId);
+  const templatesForSplit = SQUAD_WORKOUT_TEMPLATES.filter(
+    (t) => t.splitGroup === splitTab
+  );
 
   const ensureDraft = (): ActiveWorkoutDraft => {
     if (activeWorkout) return activeWorkout;
@@ -188,6 +201,46 @@ export function WorkoutLoggerScreen() {
       notes: '',
       exercises: [],
     };
+  };
+
+  // Load an entire PPL, Full Body, or Boxing HIIT template in 1 tap
+  const handleLoadSquadTemplate = (tpl: SquadWorkoutTemplate) => {
+    const draftExercises: ActiveDraftExercise[] = tpl.exercises.map((item) => {
+      const prev = data.bestLiftByExercise.get(item.exerciseId);
+      const defaultWeight = prev ? prev.weight : 0;
+
+      return {
+        id: createId('we'),
+        exercise_id: item.exerciseId,
+        notes: item.note || '',
+        sets: item.repsPerSet.map((targetReps, idx) => ({
+          id: createId('set'),
+          set_number: idx + 1,
+          weight: defaultWeight,
+          weight_unit: 'kg' as const,
+          reps: targetReps,
+          rpe: 8,
+          rir: 2,
+          completed: true,
+        })),
+      };
+    });
+
+    setActiveWorkout({
+      id: createId('w'),
+      name: tpl.name,
+      workout_date: DEMO_TODAY,
+      challenge_id: activeChallengeId || 'challenge-winter-arc',
+      startedAt: Date.now(),
+      notes: tpl.focusSubtitle,
+      exercises: draftExercises,
+    });
+
+    showToast({
+      title: `Loaded ${tpl.name}`,
+      subtitle: `${tpl.exercises.length} exercises ready — enter your weights (kg) & save!`,
+      type: 'success',
+    });
   };
 
   // 1-Step Add Exercise with Weight, Reps & Sets directly into Today's Workout
@@ -205,15 +258,14 @@ export function WorkoutLoggerScreen() {
     const w =
       overrideWeight !== undefined
         ? overrideWeight
-        : Number(entryWeight) || prev?.weight || 40;
+        : Number(entryWeight) || prev?.weight || 20;
     const r =
-      overrideReps !== undefined ? overrideReps : Number(entryReps) || prev?.reps || 8;
+      overrideReps !== undefined ? overrideReps : Number(entryReps) || prev?.reps || 12;
     const count = overrideSets !== undefined ? overrideSets : Math.max(1, entrySetsCount);
 
     const existingEx = draft.exercises.find((e) => e.exercise_id === targetExId);
 
     if (existingEx) {
-      // Append sets to the existing exercise card
       const addedSets = Array.from({ length: count }, (_, idx) => ({
         id: createId('set'),
         set_number: existingEx.sets.length + idx + 1,
@@ -232,12 +284,14 @@ export function WorkoutLoggerScreen() {
         ),
       });
     } else {
+      // Default to 15-12-10 if 3 sets are added
+      const defaultPyramid = count === 3 ? [15, 12, 10] : null;
       const newSets = Array.from({ length: count }, (_, idx) => ({
         id: createId('set'),
         set_number: idx + 1,
         weight: w,
         weight_unit: 'kg' as const,
-        reps: r,
+        reps: defaultPyramid && overrideReps === undefined ? defaultPyramid[idx] : r,
         rpe: 8,
         rir: 2,
         completed: true,
@@ -280,12 +334,13 @@ export function WorkoutLoggerScreen() {
     });
   };
 
-  // 1-Tap Repeat Last Session so users don't have to pick exercises one by one
+  // 1-Tap Repeat Last Session
   const handleRepeatLastWorkout = () => {
     const lastWorkout = data.sortedWorkouts[0];
     if (!lastWorkout) {
       showToast({
-        title: 'No previous workout found',
+        title: 'No previous workout found yet',
+        subtitle: 'Pick a PPL or Full Body routine above for Day 1!',
         type: 'info',
       });
       return;
@@ -303,7 +358,7 @@ export function WorkoutLoggerScreen() {
       return {
         id: createId('we'),
         exercise_id: we.exercise_id,
-        notes: '',
+        notes: we.notes || '',
         sets:
           weSets.length > 0
             ? weSets.map((s, idx) => ({
@@ -320,9 +375,9 @@ export function WorkoutLoggerScreen() {
                 {
                   id: createId('set'),
                   set_number: 1,
-                  weight: 50,
+                  weight: 20,
                   weight_unit: 'kg' as const,
-                  reps: 8,
+                  reps: 12,
                   rpe: 8,
                   rir: 2,
                   completed: true,
@@ -390,9 +445,9 @@ export function WorkoutLoggerScreen() {
             {
               id: createId('set'),
               set_number: ex.sets.length + 1,
-              weight: lastSet ? lastSet.weight : 40,
+              weight: lastSet ? lastSet.weight : 20,
               weight_unit: 'kg',
-              reps: lastSet ? lastSet.reps : 8,
+              reps: lastSet ? lastSet.reps : 10,
               rpe: 8,
               rir: 2,
               completed: true,
@@ -431,7 +486,7 @@ export function WorkoutLoggerScreen() {
     if (!activeWorkout || activeWorkout.exercises.length === 0) {
       showToast({
         title: 'Add at least one exercise first',
-        subtitle: 'Search an exercise above and tap + Add Lift',
+        subtitle: 'Tap a PPL / Full Body routine or search an exercise above',
         type: 'error',
       });
       return;
@@ -489,13 +544,13 @@ export function WorkoutLoggerScreen() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0D1117] border border-white/10 rounded-3xl p-4">
         <div>
           <span className="text-[10px] font-display uppercase tracking-widest text-[#5EC8FF] block">
-            SIMPLE WORKOUT LOG • 68+ EXERCISES
+            PPL WEEK • FULL BODY WEEK • BOXING HIIT • CUSTOM
           </span>
           <h1 className="text-xl font-display font-bold text-[#F5F7FA]">
-            Log Today&apos;s Lifts
+            Log Today&apos;s Workout
           </h1>
           <p className="text-xs text-[#8B98A8]">
-            Search any exercise, enter weight (kg) &amp; reps, or repeat your last session in 1 tap.
+            1-tap load your PPL or Full Body day, or search &amp; add any exercise freely.
           </p>
         </div>
 
@@ -559,14 +614,16 @@ export function WorkoutLoggerScreen() {
         </div>
       )}
 
-      {/* FAST SEARCH + 1-STEP LIFT ADDER CARD */}
-      <div className="rounded-3xl border border-white/10 bg-[#0D1117] p-4 sm:p-5 space-y-4">
+      {/* 1-TAP SQUAD SPLIT PICKER: WEEK A (PPL) vs WEEK B (FULL BODY) vs BOXING HIIT */}
+      <div className="rounded-3xl border border-white/10 bg-[#0D1117] p-4 sm:p-5 space-y-3.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-xs font-display font-bold uppercase tracking-wider text-[#F5F7FA]">
-            Quick Add Exercise
-          </span>
+          <div className="flex items-center gap-2">
+            <Layers className="w-4 h-4 text-[#5EC8FF]" />
+            <span className="text-xs font-display font-bold uppercase tracking-wider text-[#F5F7FA]">
+              1-Tap Squad Split Routines
+            </span>
+          </div>
 
-          {/* 1-Tap Repeat Last Workout Button */}
           <button
             type="button"
             onClick={handleRepeatLastWorkout}
@@ -577,7 +634,86 @@ export function WorkoutLoggerScreen() {
           </button>
         </div>
 
-        {/* Search Input with Instant Autocomplete across 68+ Exercises */}
+        {/* Split Mode Switcher: PPL Week | Full Body Week | Boxing HIIT */}
+        <div className="grid grid-cols-3 gap-1.5 bg-[#121821] border border-white/10 rounded-2xl p-1.5">
+          <button
+            type="button"
+            onClick={() => setSplitTab('PPL')}
+            className={`py-2 px-2.5 rounded-xl text-xs font-display font-bold transition-all ${
+              splitTab === 'PPL'
+                ? 'bg-[#5EC8FF] text-[#07090C] shadow-[0_0_16px_rgba(94,200,255,0.35)]'
+                : 'text-[#9BA8B8] hover:text-[#F5F7FA]'
+            }`}
+          >
+            PPL Week (6 Days)
+          </button>
+          <button
+            type="button"
+            onClick={() => setSplitTab('FULL_BODY')}
+            className={`py-2 px-2.5 rounded-xl text-xs font-display font-bold transition-all ${
+              splitTab === 'FULL_BODY'
+                ? 'bg-[#5EC8FF] text-[#07090C] shadow-[0_0_16px_rgba(94,200,255,0.35)]'
+                : 'text-[#9BA8B8] hover:text-[#F5F7FA]'
+            }`}
+          >
+            Full Body Week (5 Days)
+          </button>
+          <button
+            type="button"
+            onClick={() => setSplitTab('BOXING_HIIT')}
+            className={`py-2 px-2.5 rounded-xl text-xs font-display font-bold transition-all flex items-center justify-center gap-1 ${
+              splitTab === 'BOXING_HIIT'
+                ? 'bg-[#F59E0B] text-[#07090C] shadow-[0_0_16px_rgba(245,158,11,0.35)]'
+                : 'text-[#9BA8B8] hover:text-[#F5F7FA]'
+            }`}
+          >
+            <Flame className="w-3.5 h-3.5" />
+            <span>Boxing HIIT</span>
+          </button>
+        </div>
+
+        {/* Routine Day Cards for the Active Split */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          {templatesForSplit.map((tpl) => {
+            const isLoaded = activeWorkout?.name === tpl.name;
+            return (
+              <button
+                key={tpl.id}
+                type="button"
+                data-testid={`load-template-${tpl.id}`}
+                onClick={() => handleLoadSquadTemplate(tpl)}
+                className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between gap-1.5 ${
+                  isLoaded
+                    ? 'bg-[#5EC8FF]/15 border-[#5EC8FF] shadow-[0_0_18px_rgba(94,200,255,0.2)]'
+                    : 'bg-[#121821] border-white/10 hover:border-[#5EC8FF]/50'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-xs sm:text-sm font-display font-bold text-[#F5F7FA] truncate">
+                    {tpl.shortLabel}
+                  </span>
+                  <span className="text-[10px] font-display font-bold px-2 py-0.5 rounded-full bg-[#5EC8FF]/20 text-[#5EC8FF] shrink-0">
+                    Load
+                  </span>
+                </div>
+                <span className="text-[11px] text-[#8B98A8] line-clamp-1">
+                  {tpl.focusSubtitle}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* FAST SEARCH + 1-STEP LIFT ADDER (Add or Swap Any Exercise Freely) */}
+      <div className="rounded-3xl border border-white/10 bg-[#0D1117] p-4 sm:p-5 space-y-4">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-display font-bold uppercase tracking-wider text-[#F5F7FA]">
+            Or Search &amp; Add Any Exercise ({data.exercises.length}+ Available)
+          </span>
+          <span className="text-[11px] text-[#8B98A8]">Not limited to templates</span>
+        </div>
+
         <div className="relative space-y-2">
           <div className="relative">
             <Search className="w-4 h-4 text-[#5EC8FF] absolute left-3.5 top-3.5 pointer-events-none" />
@@ -586,7 +722,7 @@ export function WorkoutLoggerScreen() {
               data-testid="exercise-search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search 68+ exercises (e.g. Bench, Squat, RDL, Lat Pulldown)..."
+              placeholder="Search any lift (e.g. Bench, Arnold, Egyptian Lateral, Nordic, Tire Flip)..."
               className="w-full h-11 pl-10 pr-10 rounded-2xl bg-[#121821] border border-white/10 text-sm text-[#F5F7FA] placeholder:text-[#8B98A8] focus:outline-none focus:border-[#5EC8FF]"
             />
             {searchQuery && (
@@ -621,8 +757,8 @@ export function WorkoutLoggerScreen() {
             ))}
           </div>
 
-          {/* Compact Scrollable Exercise Picker List (shows top matches or recent lifts, never a 60-button wall) */}
-          <div className="max-h-44 overflow-y-auto rounded-2xl border border-white/10 bg-[#121821] divide-y divide-white/5">
+          {/* Compact Scrollable Exercise Picker List */}
+          <div className="max-h-40 overflow-y-auto rounded-2xl border border-white/10 bg-[#121821] divide-y divide-white/5">
             {filteredExercises.map((ex) => {
               const isSelected = ex.id === selectedExerciseId;
               const prev = data.bestLiftByExercise.get(ex.id);
@@ -635,9 +771,9 @@ export function WorkoutLoggerScreen() {
                     setSelectedExerciseId(ex.id);
                     handleQuickLogExercise(
                       ex.id,
-                      prev ? prev.weight : 50,
-                      prev ? prev.reps : 8,
-                      1
+                      prev ? prev.weight : 20,
+                      prev ? prev.reps : undefined,
+                      3
                     );
                   }}
                   className={`w-full px-3.5 py-2.5 text-left flex items-center justify-between gap-2 transition-colors ${
@@ -662,14 +798,13 @@ export function WorkoutLoggerScreen() {
                       </span>
                     )}
                     <span className="px-2.5 py-1 rounded-lg bg-[#5EC8FF]/20 text-[#5EC8FF] text-xs font-display font-bold">
-                      + Add
+                      + Add 3 Sets
                     </span>
                   </div>
                 </button>
               );
             })}
 
-            {/* If user typed a custom exercise not in the 68+ library, let them create & select it right here */}
             {searchQuery.trim().length > 1 && !hasExactSearchMatch && (
               <button
                 type="button"
@@ -677,7 +812,7 @@ export function WorkoutLoggerScreen() {
                 className="w-full px-3.5 py-2.5 text-left flex items-center justify-between bg-[#5EC8FF]/10 hover:bg-[#5EC8FF]/20 text-[#5EC8FF]"
               >
                 <span className="text-xs font-display font-bold">
-                  + Add New Exercise &ldquo;{searchQuery.trim()}&rdquo;
+                  + Create &amp; Add Custom Exercise &ldquo;{searchQuery.trim()}&rdquo;
                 </span>
                 <Plus className="w-4 h-4" />
               </button>
@@ -735,7 +870,7 @@ export function WorkoutLoggerScreen() {
 
               <div className="col-span-3">
                 <label className="text-[10px] font-display uppercase tracking-wider text-[#8B98A8] block mb-1">
-                  Reps
+                  Reps / Sec
                 </label>
                 <input
                   type="number"
@@ -786,22 +921,34 @@ export function WorkoutLoggerScreen() {
               TODAY&apos;S SESSION ({data.currentUser?.display_name})
             </span>
             <h2 className="text-base font-display font-bold text-[#F5F7FA]">
-              Exercises in Today&apos;s Workout ({activeWorkout?.exercises.length || 0})
+              {activeWorkout?.name || "Today's Workout"} ({activeWorkout?.exercises.length || 0}{' '}
+              exercises)
             </h2>
           </div>
+          {activeWorkout && activeWorkout.exercises.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setActiveWorkout(null)}
+              className="text-xs text-[#8B98A8] hover:text-[#F87171]"
+            >
+              Clear All
+            </button>
+          )}
         </div>
 
         {!activeWorkout || activeWorkout.exercises.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/10 p-6 text-center">
             <Dumbbell className="w-6 h-6 text-[#8B98A8] mx-auto mb-2" />
-            <p className="text-sm font-medium text-[#F5F7FA]">No exercises in today&apos;s list</p>
+            <p className="text-sm font-medium text-[#F5F7FA]">
+              Pick today&apos;s PPL or Full Body routine above
+            </p>
             <p className="text-xs text-[#8B98A8] mt-1">
-              Search any exercise above or tap &ldquo;Copy Last Workout&rdquo; to load your routine.
+              Or search any exercise in the search bar to build a custom session.
             </p>
           </div>
         ) : (
           <div className="space-y-3">
-            {activeWorkout.exercises.map((exItem) => {
+            {activeWorkout.exercises.map((exItem, exIdx) => {
               const exName = exerciseMap.get(exItem.exercise_id) || 'Exercise';
               const prevBest = data.bestLiftByExercise.get(exItem.exercise_id);
 
@@ -814,16 +961,21 @@ export function WorkoutLoggerScreen() {
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <h3 className="text-sm sm:text-base font-display font-bold text-[#F5F7FA]">
-                        {exName}
+                        {exIdx + 1}. {exName}
                       </h3>
+                      {exItem.notes && (
+                        <p className="text-[11px] text-[#FBBF24] font-medium mt-0.5">
+                          {exItem.notes}
+                        </p>
+                      )}
                       {prevBest && (
-                        <p className="text-[11px] text-[#5EC8FF] flex items-center gap-1">
+                        <p className="text-[11px] text-[#5EC8FF] flex items-center gap-1 mt-0.5">
                           <Trophy className="w-3 h-3" />
                           Previous Best: {prevBest.weight} kg × {prevBest.reps} reps
                         </p>
                       )}
                     </div>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <button
                         type="button"
                         onClick={() => handleAddSet(exItem.id)}
@@ -851,7 +1003,7 @@ export function WorkoutLoggerScreen() {
                       >
                         <div className="col-span-2">
                           <span className="text-xs font-display font-bold text-[#5EC8FF]">
-                            #{idx + 1}
+                            Set {idx + 1}
                           </span>
                         </div>
 
@@ -860,6 +1012,7 @@ export function WorkoutLoggerScreen() {
                             type="number"
                             inputMode="decimal"
                             step="0.5"
+                            placeholder="0"
                             aria-label={`${exName} Set ${idx + 1} Weight`}
                             value={s.weight || ''}
                             onChange={(e) =>
@@ -935,52 +1088,58 @@ export function WorkoutLoggerScreen() {
           </button>
         </div>
 
-        <div className="space-y-2.5">
-          {data.sortedWorkouts.slice(0, 5).map((w) => {
-            const wExs = data.userWEs.filter((we) => we.workout_id === w.id);
-            return (
-              <div
-                key={w.id}
-                className="rounded-2xl border border-white/10 bg-[#121821] p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
-              >
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-display font-bold text-[#F5F7FA]">
-                      {w.name}
-                    </span>
-                    <span className="text-xs text-[#8B98A8] font-display">
-                      {w.workout_date}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 mt-1.5">
-                    {wExs.map((we) => {
-                      const exSets = data.userSets.filter(
-                        (s) => s.workout_exercise_id === we.id
-                      );
-                      const maxWeight = exSets.reduce(
-                        (max, s) => (s.weight > max ? s.weight : max),
-                        0
-                      );
-                      const bestReps =
-                        exSets.find((s) => s.weight === maxWeight)?.reps ?? 0;
-                      return (
-                        <span
-                          key={we.id}
-                          className="px-2.5 py-1 rounded-lg bg-[#0D1117] border border-white/10 text-xs text-[#F5F7FA]"
-                        >
-                          {exerciseMap.get(we.exercise_id) || 'Lift'}:{' '}
-                          <strong className="font-display text-[#5EC8FF]">
-                            {maxWeight} kg × {bestReps}
-                          </strong>
-                        </span>
-                      );
-                    })}
+        {data.sortedWorkouts.length === 0 ? (
+          <p className="text-xs text-[#8B98A8] py-2">
+            No workouts logged yet — today is Day 1 of your Winter Arc journey!
+          </p>
+        ) : (
+          <div className="space-y-2.5">
+            {data.sortedWorkouts.slice(0, 5).map((w) => {
+              const wExs = data.userWEs.filter((we) => we.workout_id === w.id);
+              return (
+                <div
+                  key={w.id}
+                  className="rounded-2xl border border-white/10 bg-[#121821] p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                >
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-display font-bold text-[#F5F7FA]">
+                        {w.name}
+                      </span>
+                      <span className="text-xs text-[#8B98A8] font-display">
+                        {w.workout_date}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      {wExs.map((we) => {
+                        const exSets = data.userSets.filter(
+                          (s) => s.workout_exercise_id === we.id
+                        );
+                        const maxWeight = exSets.reduce(
+                          (max, s) => (s.weight > max ? s.weight : max),
+                          0
+                        );
+                        const bestReps =
+                          exSets.find((s) => s.weight === maxWeight)?.reps ?? 0;
+                        return (
+                          <span
+                            key={we.id}
+                            className="px-2.5 py-1 rounded-lg bg-[#0D1117] border border-white/10 text-xs text-[#F5F7FA]"
+                          >
+                            {exerciseMap.get(we.exercise_id) || 'Lift'}:{' '}
+                            <strong className="font-display text-[#5EC8FF]">
+                              {maxWeight} kg × {bestReps}
+                            </strong>
+                          </span>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -190,7 +190,7 @@ export function HomeDashboard() {
   );
 
   const accentColor = challenge.accent_color || '#7DD3FC';
-  const currentWeight = latestMetric?.weight ?? user.weight ?? 82;
+  const currentWeight = latestMetric?.weight ?? user.weight ?? null;
 
   const handleSaveWeight = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -302,7 +302,9 @@ export function HomeDashboard() {
                   {challenge.name}
                 </h2>
                 <div className="mt-2 flex items-center justify-between text-xs font-medium">
-                  <span className="text-[#8B98A8]">{progress.remainingDays} days left</span>
+                  <span className="text-[#8B98A8]">
+                    Day {progress.elapsedDays} of {progress.totalDays} • {progress.remainingDays} days left
+                  </span>
                   <span className="font-display font-bold text-[#F5F7FA]">
                     {progress.percentage}%
                   </span>
@@ -328,7 +330,7 @@ export function HomeDashboard() {
               <h3 className="font-display font-bold text-lg text-[#F5F7FA]">
                 Today’s Check-In ({user.display_name})
               </h3>
-              <span className="text-xs text-[#8B98A8]">Simple Daily Updates</span>
+              <span className="text-xs text-[#8B98A8]">Day {progress.elapsedDays} Updates</span>
             </div>
 
             <div className="bg-[#0D1117] border border-[#202A35] rounded-2xl divide-y divide-[#202A35]">
@@ -344,7 +346,7 @@ export function HomeDashboard() {
                   </div>
                   <div className="min-w-0">
                     <p className="font-display font-bold text-sm text-[#F5F7FA]">
-                      Today’s Workout
+                      Today’s Workout (PPL / Full Body)
                     </p>
                     <p className="text-xs text-[#8B98A8] truncate mt-0.5">
                       {todayWorkoutSummary}
@@ -388,7 +390,7 @@ export function HomeDashboard() {
               {/* 3. Body Weight */}
               <div
                 onClick={() => {
-                  setQuickWeight(String(currentWeight));
+                  setQuickWeight(currentWeight ? String(currentWeight) : '');
                   setWeightModalOpen(true);
                 }}
                 data-testid="today-weight-row"
@@ -401,7 +403,13 @@ export function HomeDashboard() {
                   <div>
                     <p className="font-display font-bold text-sm text-[#F5F7FA]">Body Weight</p>
                     <p className="text-xs text-[#8B98A8] mt-0.5">
-                      Current: <strong className="text-[#F5F7FA]">{currentWeight} kg</strong>
+                      {currentWeight ? (
+                        <>
+                          Current: <strong className="text-[#F5F7FA]">{currentWeight} kg</strong>
+                        </>
+                      ) : (
+                        'Tap to log Day 1 starting weight'
+                      )}
                     </p>
                   </div>
                 </div>
@@ -451,7 +459,7 @@ export function HomeDashboard() {
                   Weight & Strength Progress
                 </p>
                 <p className="text-xs text-[#8B98A8]">
-                  See body weight & increase in lifting weights for Harsh, Pranav & Kavi
+                  See body weight & increase in lifting weights for Harsh, Pranav, Kavi & Vijay
                 </p>
               </div>
             </div>

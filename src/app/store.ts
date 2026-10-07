@@ -103,7 +103,7 @@ export const useAppStore = create<FitkonicStoreState>()(
       currentUserId: 'user-harsh',
       activeChallengeId: 'challenge-winter-arc',
       currentRoute: 'home',
-      selectedDate: '2026-10-07',
+      selectedDate: new Date().toISOString().slice(0, 10),
       appearance: 'dark',
       notificationsEnabled: true,
       isOnline: true,
@@ -174,7 +174,7 @@ export const useAppStore = create<FitkonicStoreState>()(
       clearToast: () => set({ recentToast: null }),
     }),
     {
-      name: 'fitkonic_app_store_v2',
+      name: 'fitkonic_app_store_v5_clean',
       partialize: (state) => ({
         currentUserId: state.currentUserId,
         activeChallengeId: state.activeChallengeId,
