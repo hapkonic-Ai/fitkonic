@@ -512,8 +512,45 @@ export const SQUAD_WORKOUT_TEMPLATES: SquadWorkoutTemplate[] = [
 export async function ensureSeedData(): Promise<void> {
   await db.exercises.bulkPut(SEED_EXERCISES);
 
+  const resetKey = 'fitkonic_day1_clean_reset_v6';
+  const needsCleanReset =
+    typeof window !== 'undefined' && window.localStorage.getItem(resetKey) !== 'done';
+
+  if (needsCleanReset) {
+    await db.transaction(
+      'rw',
+      [
+        db.workouts,
+        db.workout_exercises,
+        db.sets,
+        db.diet_logs,
+        db.body_metrics,
+        db.personal_records,
+        db.sync_queue,
+      ],
+      async () => {
+        await db.workouts.clear();
+        await db.workout_exercises.clear();
+        await db.sets.clear();
+        await db.diet_logs.clear();
+        await db.body_metrics.clear();
+        await db.personal_records.clear();
+        await db.sync_queue.clear();
+      }
+    );
+    window.localStorage.setItem(resetKey, 'done');
+  } else {
+    // Also guard against any legacy seed IDs
+    await db.workouts.where('id').startsWith('w-seed-').delete();
+    await db.workout_exercises.where('id').startsWith('we-seed-').delete();
+    await db.sets.where('id').startsWith('s-seed-').delete();
+    await db.body_metrics.where('id').startsWith('bm-seed-').delete();
+    await db.diet_logs.where('id').startsWith('dl-seed-').delete();
+    await db.personal_records.where('id').startsWith('pr-seed-').delete();
+  }
+
   const existingCount = await db.profiles.count();
-  if (existingCount >= 4) return;
+  if (existingCount >= 4 && !needsCleanReset) return;
 
   const syncMeta = createSyncMeta('synced');
   const nowIso = new Date().toISOString();

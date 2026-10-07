@@ -174,7 +174,7 @@ export const useAppStore = create<FitkonicStoreState>()(
       clearToast: () => set({ recentToast: null }),
     }),
     {
-      name: 'fitkonic_app_store_v5_clean',
+      name: 'fitkonic_app_store_v6_clean',
       partialize: (state) => ({
         currentUserId: state.currentUserId,
         activeChallengeId: state.activeChallengeId,
