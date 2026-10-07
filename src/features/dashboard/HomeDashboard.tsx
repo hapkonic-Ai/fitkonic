@@ -140,9 +140,17 @@ export function HomeDashboard() {
         })
       : [];
 
+    const squadOrder = ['user-harsh', 'user-pranav', 'user-kavi', 'user-vijay'];
+    const orderedProfiles = [...allProfiles].sort((a, b) => {
+      const ia = squadOrder.indexOf(a.id);
+      const ib = squadOrder.indexOf(b.id);
+      if (ia !== -1 && ib !== -1) return ia - ib;
+      return a.display_name.localeCompare(b.display_name);
+    });
+
     return {
       user,
-      allProfiles,
+      allProfiles: orderedProfiles,
       challenge,
       memberProfiles,
       todayWorkout,
@@ -203,13 +211,13 @@ export function HomeDashboard() {
 
   return (
     <div data-testid="home-dashboard" className="pb-24 lg:pb-10 space-y-6">
-      {/* Top Bar with 1-tap switcher between Harsh, Pranav, and Kavi */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* Glassmorphic Top Header + 4-User Segmented Switcher (Harsh | Pranav | Kavi | Vijay) */}
+      <div className="bg-[#0D1117] border border-white/10 rounded-3xl p-4 space-y-3.5 sm:space-y-0 sm:flex sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <button
             type="button"
             onClick={() => navigate('profile')}
-            className="relative rounded-full ring-2 ring-[#5EC8FF]/50 p-0.5 shrink-0"
+            className="relative rounded-full ring-2 ring-[#5EC8FF]/60 p-0.5 shrink-0 shadow-[0_0_20px_rgba(94,200,255,0.25)]"
           >
             <img
               src={user.avatar_url}
@@ -218,18 +226,18 @@ export function HomeDashboard() {
             />
           </button>
           <div className="min-w-0">
-            <p className="text-[11px] font-display font-bold uppercase tracking-widest text-[#8B98A8]">
+            <p className="text-[10px] font-display font-bold uppercase tracking-widest text-[#5EC8FF]">
               LOGGED IN AS {user.display_name.toUpperCase()}
             </p>
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap mt-0.5">
               <FitkonicLogo size="sm" />
               <StreakIndicator days={streakDays} />
             </div>
           </div>
         </div>
 
-        {/* 3-User Switcher Pills: Harsh | Pranav | Kavi */}
-        <div className="flex items-center gap-1.5 bg-[#0D1117] border border-[#202A35] rounded-xl p-1">
+        {/* 4-User Glass Segmented Switcher: Harsh | Pranav | Kavi | Vijay */}
+        <div className="grid grid-cols-4 gap-1.5 bg-[#121821] border border-white/10 rounded-2xl p-1.5 w-full sm:w-auto">
           {allProfiles.map((p) => (
             <button
               key={p.id}
@@ -237,14 +245,14 @@ export function HomeDashboard() {
               onClick={() => setCurrentUser(p.id)}
               data-testid={`switch-user-${p.username}`}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-display font-bold transition-all flex items-center gap-1.5',
+                'px-2.5 py-2 rounded-xl text-xs font-display font-bold transition-all flex items-center justify-center gap-1.5',
                 p.id === user.id
-                  ? 'bg-[#5EC8FF] text-[#07090C]'
-                  : 'text-[#8B98A8] hover:text-[#F5F7FA]'
+                  ? 'bg-[#5EC8FF] text-[#07090C] shadow-[0_0_18px_rgba(94,200,255,0.4)]'
+                  : 'text-[#9BA8B8] hover:text-[#F5F7FA]'
               )}
             >
-              <img src={p.avatar_url} alt={p.display_name} className="w-4 h-4 rounded-full" />
-              <span>{p.display_name}</span>
+              <img src={p.avatar_url} alt={p.display_name} className="w-4 h-4 rounded-full hidden sm:inline-block" />
+              <span className="truncate">{p.display_name}</span>
             </button>
           ))}
         </div>

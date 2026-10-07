@@ -165,7 +165,7 @@ export function DietTrackerScreen() {
   };
 
   return (
-    <div data-testid="diet-tracker-screen" className="max-w-4xl mx-auto px-4 pt-4 pb-28 space-y-6">
+    <div data-testid="diet-tracker-screen" className="max-w-4xl mx-auto pb-28 space-y-5">
       {/* Header + 3-Login Switcher (Harsh, Pranav, Kavi) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#0D1117] border border-[#202A35] rounded-2xl p-4">
         <div>
@@ -180,7 +180,7 @@ export function DietTrackerScreen() {
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 self-start sm:self-auto">
+        <div className="grid grid-cols-4 gap-1.5 bg-[#121821] border border-white/10 rounded-2xl p-1.5 w-full sm:w-auto">
           {data.profiles.map((member) => {
             const active = member.id === uid;
             return (
@@ -188,10 +188,10 @@ export function DietTrackerScreen() {
                 key={member.id}
                 type="button"
                 onClick={() => setCurrentUser(member.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-display font-semibold transition-all ${
+                className={`px-2.5 py-2 rounded-xl text-xs font-display font-bold transition-all text-center truncate ${
                   active
-                    ? 'bg-[#5EC8FF] text-[#07090C]'
-                    : 'bg-[#121821] text-[#8B98A8] border border-[#202A35] hover:text-[#F5F7FA]'
+                    ? 'bg-[#5EC8FF] text-[#07090C] shadow-[0_0_18px_rgba(94,200,255,0.4)]'
+                    : 'text-[#9BA8B8] hover:text-[#F5F7FA]'
                 }`}
               >
                 {member.display_name}

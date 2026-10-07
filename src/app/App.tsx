@@ -135,23 +135,32 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090C] text-[#F5F7FA] flex flex-col">
-      {/* Top Offline & Neon Sync Banner */}
-      <OfflineBanner
-        isOnline={isOnline}
-        simulatedOffline={simulatedOffline}
-        syncStatus={syncStatus}
-        pendingCount={pendingSyncCount}
-        lastError={lastSyncError}
-        onToggleSimulatedOffline={handleToggleOffline}
-        onRetrySync={handleRetrySync}
-      />
+    <div className="relative min-h-screen bg-transparent text-[#F5F7FA] flex flex-col overflow-x-hidden">
+      {/* Ambient Glassmorphic Light Orbs for Phone & Desktop Depth */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+        <div className="absolute -top-24 -left-20 w-72 h-72 rounded-full bg-[#5EC8FF]/15 blur-[90px]" />
+        <div className="absolute top-1/3 -right-24 w-80 h-80 rounded-full bg-[#38BDF8]/10 blur-[100px]" />
+        <div className="absolute bottom-16 left-1/4 w-72 h-72 rounded-full bg-[#4ADE80]/8 blur-[95px]" />
+      </div>
 
-      <div className="flex-1 flex">
+      {/* Top Offline & Neon Sync Banner */}
+      <div className="relative z-30">
+        <OfflineBanner
+          isOnline={isOnline}
+          simulatedOffline={simulatedOffline}
+          syncStatus={syncStatus}
+          pendingCount={pendingSyncCount}
+          lastError={lastSyncError}
+          onToggleSimulatedOffline={handleToggleOffline}
+          onRetrySync={handleRetrySync}
+        />
+      </div>
+
+      <div className="relative z-10 flex-1 flex">
         {/* Desktop Sidebar Navigation (Section 34 & 36 — NO Group Chat) */}
         <aside
           aria-label="Desktop Navigation"
-          className="hidden lg:flex lg:w-64 lg:flex-col lg:shrink-0 border-r border-[#202A35] bg-[#0D1117]/80 p-5 justify-between"
+          className="hidden lg:flex lg:w-64 lg:flex-col lg:shrink-0 border-r border-white/10 bg-[#0D1117]/70 backdrop-blur-2xl p-5 justify-between"
         >
           <div className="space-y-6">
             <div className="px-2">
@@ -174,7 +183,7 @@ export function App() {
                       'w-full px-3.5 py-2.5 rounded-xl text-sm font-display font-bold flex items-center gap-3 transition-all',
                       active
                         ? 'bg-[#5EC8FF] text-[#07090C] shadow-glow-cyan'
-                        : 'text-[#8B98A8] hover:text-[#F5F7FA] hover:bg-[#121821]'
+                        : 'text-[#8B98A8] hover:text-[#F5F7FA] hover:bg-white/5'
                     )}
                   >
                     {item.icon}
@@ -185,7 +194,7 @@ export function App() {
             </nav>
           </div>
 
-          <div className="pt-4 border-t border-[#202A35] space-y-2">
+          <div className="pt-4 border-t border-white/10 space-y-2">
             <button
               type="button"
               onClick={() => navigate('settings')}
@@ -193,7 +202,7 @@ export function App() {
               className={cn(
                 'w-full px-3.5 py-2.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider flex items-center gap-3 transition-colors',
                 currentRoute === 'settings'
-                  ? 'bg-[#121821] text-[#5EC8FF]'
+                  ? 'bg-white/10 text-[#5EC8FF]'
                   : 'text-[#8B98A8] hover:text-[#F5F7FA]'
               )}
             >
@@ -204,7 +213,7 @@ export function App() {
         </aside>
 
         {/* Main Content Viewport */}
-        <main className="flex-1 min-w-0 px-4 py-5 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
+        <main className="flex-1 min-w-0 px-3.5 py-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
           {currentRoute === 'home' && <HomeDashboard />}
           {currentRoute === 'log-workout' && <WorkoutLoggerScreen />}
           {currentRoute === 'log-diet' && <DietTrackerScreen />}
@@ -220,10 +229,10 @@ export function App() {
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation (Matches Screen 2 of UI Reference: Home | Challenges | Log | Progress | Profile) */}
+      {/* Floating Glassmorphic Mobile Bottom Navigation Dock */}
       <nav
         aria-label="Mobile Bottom Navigation"
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0D1117]/95 backdrop-blur-md border-t border-[#202A35] px-2 py-1.5 flex items-center justify-around"
+        className="lg:hidden fixed bottom-3 left-3 right-3 z-40 fk-glass-dock rounded-3xl px-2 py-2 flex items-center justify-around"
       >
         {mobileNavItems.map((item) => {
           const active = isRouteActive(item.id);
@@ -234,12 +243,16 @@ export function App() {
               onClick={() => navigate(item.id)}
               data-testid={`mobile-nav-${item.id}`}
               className={cn(
-                'flex flex-col items-center justify-center py-1 px-3 rounded-xl transition-colors min-w-[58px]',
-                active ? 'text-[#5EC8FF]' : 'text-[#8B98A8] hover:text-[#F5F7FA]'
+                'flex flex-col items-center justify-center py-1.5 px-3 rounded-2xl transition-all min-w-[60px]',
+                active
+                  ? 'bg-[#5EC8FF]/20 text-[#5EC8FF] border border-[#5EC8FF]/40 shadow-[0_0_20px_rgba(94,200,255,0.25)]'
+                  : 'text-[#9BA8B8] hover:text-[#F5F7FA]'
               )}
             >
               {item.icon}
-              <span className="mt-1 text-xs font-medium">{item.label}</span>
+              <span className="mt-1 text-[11px] font-display font-semibold tracking-tight">
+                {item.label}
+              </span>
             </button>
           );
         })}
