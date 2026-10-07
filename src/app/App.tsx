@@ -14,7 +14,7 @@ import {
 import { ensureSeedData } from '@/db/seed';
 import { useAppStore, type AppRoute } from '@/app/store';
 import { syncEngine } from '@/lib/sync/syncEngine';
-import { FitkonicLogo, OfflineBanner } from '@/components/ui/FitkonicComponents';
+import { FitkonicLogo } from '@/components/ui/FitkonicComponents';
 import { LoginScreen } from '@/features/auth/LoginScreen';
 import { HomeDashboard } from '@/features/dashboard/HomeDashboard';
 import { WorkoutLoggerScreen } from '@/features/workouts/WorkoutLoggerScreen';
@@ -36,13 +36,7 @@ export function App() {
     currentUserId,
     currentRoute,
     navigate,
-    isOnline,
-    simulatedOffline,
-    syncStatus,
-    pendingSyncCount,
-    lastSyncError,
     setSyncState,
-    setSimulatedOffline,
     recentToast,
     clearToast,
   } = useAppStore();
@@ -75,22 +69,12 @@ export function App() {
     return () => clearTimeout(t);
   }, [recentToast, clearToast]);
 
-  const handleToggleOffline = () => {
-    const next = !simulatedOffline;
-    setSimulatedOffline(next);
-    syncEngine.setSimulatedOffline(next);
-  };
-
-  const handleRetrySync = () => {
-    void syncEngine.flushQueue();
-  };
-
   if (!ready) {
     return (
       <div className="min-h-screen bg-[#07090C] text-[#F5F7FA] flex flex-col items-center justify-center p-6">
         <FitkonicLogo size="lg" />
         <p className="mt-3 text-xs font-display tracking-widest uppercase text-[#8B98A8]">
-          Initializing Offline-First Engine & Neon DB...
+          Loading Fitkonic...
         </p>
       </div>
     );
@@ -141,19 +125,6 @@ export function App() {
         <div className="absolute -top-24 -left-20 w-72 h-72 rounded-full bg-[#5EC8FF]/15 blur-[90px]" />
         <div className="absolute top-1/3 -right-24 w-80 h-80 rounded-full bg-[#38BDF8]/10 blur-[100px]" />
         <div className="absolute bottom-16 left-1/4 w-72 h-72 rounded-full bg-[#4ADE80]/8 blur-[95px]" />
-      </div>
-
-      {/* Top Offline & Neon Sync Banner */}
-      <div className="relative z-30">
-        <OfflineBanner
-          isOnline={isOnline}
-          simulatedOffline={simulatedOffline}
-          syncStatus={syncStatus}
-          pendingCount={pendingSyncCount}
-          lastError={lastSyncError}
-          onToggleSimulatedOffline={handleToggleOffline}
-          onRetrySync={handleRetrySync}
-        />
       </div>
 
       <div className="relative z-10 flex-1 flex">
