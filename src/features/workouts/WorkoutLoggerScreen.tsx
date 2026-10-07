@@ -198,9 +198,9 @@ export function WorkoutLoggerScreen() {
     const created = await createCustomExercise({
       userId: uid,
       name: trimmed,
-      category: 'strength',
+      category: 'Full Body',
       muscle_group: 'Full Body',
-      equipment: 'barbell',
+      equipment: 'Barbell',
     });
     handleAddExerciseToToday(created.id);
     setCustomExerciseName('');
