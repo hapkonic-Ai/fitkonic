@@ -48,6 +48,7 @@ export function App() {
     ensureSeedData()
       .then(() => {
         if (mounted) setReady(true);
+        void syncEngine.syncAll();
       })
       .catch(() => {
         if (mounted) setReady(true);

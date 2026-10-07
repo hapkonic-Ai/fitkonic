@@ -1,5 +1,9 @@
 import { db } from '@/db/dexie';
-import { checkNeonServerHealth, syncMutationsToNeon } from '@/lib/neon/client';
+import {
+  checkNeonServerHealth,
+  pullAllRecordsFromNeon,
+  syncMutationsToNeon,
+} from '@/lib/neon/client';
 import { createId } from '@/lib/utils';
 import type { SyncQueueItem, SyncStatus } from '@/types';
 
@@ -16,6 +20,8 @@ class FitkonicSyncEngine {
   private listeners = new Set<SyncListener>();
   private simulatedOffline = false;
   private isFlushing = false;
+  private isPulling = false;
+  private hasBackfilled = false;
   private currentUserId = 'user-harsh';
   private lastSyncedAt: string | null = new Date().toISOString();
   private lastError: string | null = null;
@@ -27,13 +33,24 @@ class FitkonicSyncEngine {
     if (typeof window !== 'undefined') {
       window.addEventListener('online', () => {
         this.isOnline = true;
-        void this.flushQueue();
+        void this.syncAll();
       });
       window.addEventListener('offline', () => {
         this.isOnline = false;
         this.isServerReachable = false;
         void this.notifyListeners();
       });
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          void this.syncAll();
+        }
+      });
+      // Poll Neon DB every 15 seconds so squad members see each other's updates automatically
+      window.setInterval(() => {
+        if (!this.simulatedOffline && navigator.onLine) {
+          void this.syncAll();
+        }
+      }, 15000);
     }
   }
 
@@ -49,7 +66,7 @@ class FitkonicSyncEngine {
       void this.notifyListeners();
     } else {
       this.isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
-      void this.flushQueue();
+      void this.syncAll();
     }
   }
 
@@ -115,6 +132,53 @@ class FitkonicSyncEngine {
     }
   }
 
+  /**
+   * Ensure any locally logged workouts, sets, diet logs, or body metrics that were logged
+   * before Neon sync connected are queued and pushed to Neon.
+   */
+  private async backfillLocalRecordsIfNeeded(): Promise<void> {
+    if (this.hasBackfilled) return;
+    this.hasBackfilled = true;
+
+    const existingQueueIds = new Set(
+      (await db.sync_queue.toArray()).map((q) => q.recordId)
+    );
+
+    const tablesToBackfill: Array<{
+      entity: SyncQueueItem['entity'];
+      rows: Array<{ id: string }>;
+    }> = [
+      { entity: 'workouts', rows: await db.workouts.toArray() },
+      { entity: 'workout_exercises', rows: await db.workout_exercises.toArray() },
+      { entity: 'sets', rows: await db.sets.toArray() },
+      { entity: 'diet_logs', rows: await db.diet_logs.toArray() },
+      { entity: 'body_metrics', rows: await db.body_metrics.toArray() },
+      { entity: 'personal_records', rows: await db.personal_records.toArray() },
+    ];
+
+    const itemsToAdd: SyncQueueItem[] = [];
+    for (const { entity, rows } of tablesToBackfill) {
+      for (const row of rows) {
+        if (!existingQueueIds.has(row.id)) {
+          itemsToAdd.push({
+            id: createId('sq'),
+            entity,
+            recordId: row.id,
+            operation: 'upsert',
+            payload: row as unknown as Record<string, unknown>,
+            createdAt: Date.now(),
+            retryCount: 0,
+            status: 'pending',
+          });
+        }
+      }
+    }
+
+    if (itemsToAdd.length > 0) {
+      await db.sync_queue.bulkPut(itemsToAdd);
+    }
+  }
+
   public async enqueueMutation(params: {
     entity: SyncQueueItem['entity'];
     recordId: string;
@@ -141,8 +205,64 @@ class FitkonicSyncEngine {
     await this.notifyListeners();
 
     if (!this.simulatedOffline && (typeof navigator === 'undefined' || navigator.onLine)) {
-      void this.flushQueue();
+      void this.syncAll();
     }
+  }
+
+  /**
+   * Pull all squad records from Neon PostgreSQL and merge them into Dexie IndexedDB
+   */
+  public async pullFromNeon(): Promise<number> {
+    if (this.isPulling || this.simulatedOffline) return 0;
+    this.isPulling = true;
+    try {
+      const remoteRows = await pullAllRecordsFromNeon();
+      if (remoteRows.length === 0) return 0;
+
+      const pendingRecordIds = new Set(
+        (await db.sync_queue.toArray()).map((q) => q.recordId)
+      );
+
+      let applied = 0;
+      for (const row of remoteRows) {
+        // Don't overwrite a record that currently has an unsynced local edit in the outbox
+        if (pendingRecordIds.has(row.record_id)) continue;
+
+        const table = this.getTableForEntity(row.entity);
+        if (!table) continue;
+
+        if (row.deleted) {
+          await table.delete(row.record_id);
+          applied += 1;
+        } else if (row.payload && typeof row.payload === 'object') {
+          await table.put({
+            ...row.payload,
+            id: row.record_id,
+            _syncStatus: 'synced',
+            _serverVersion: row.updated_at,
+          } as never);
+          applied += 1;
+        }
+      }
+      return applied;
+    } catch {
+      return 0;
+    } finally {
+      this.isPulling = false;
+    }
+  }
+
+  /**
+   * Full 2-way synchronization:
+   * 1. Backfill any existing local records into outbox
+   * 2. Push outbox queue to Neon PostgreSQL
+   * 3. Pull squad updates from Neon PostgreSQL into local IndexedDB
+   */
+  public async syncAll(): Promise<{ synced: number; remaining: number }> {
+    await this.backfillLocalRecordsIfNeeded();
+    const res = await this.flushQueue();
+    await this.pullFromNeon();
+    return res;
   }
 
   public async flushQueue(): Promise<{ synced: number; remaining: number }> {

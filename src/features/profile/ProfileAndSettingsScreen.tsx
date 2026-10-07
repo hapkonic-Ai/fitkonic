@@ -502,10 +502,10 @@ export function SettingsScreen() {
   };
 
   const handleForceSync = async () => {
-    const res = await syncEngine.flushQueue();
+    const res = await syncEngine.syncAll();
     showToast({
       title: 'Neon DB Sync Complete',
-      subtitle: `${res.synced} queued operations synchronized`,
+      subtitle: `${res.synced} local updates pushed & squad data refreshed`,
       type: 'success',
     });
   };
