@@ -191,19 +191,93 @@ export const SEED_CHALLENGES: Challenge[] = [
 ];
 
 export const SEED_EXERCISES: Exercise[] = [
+  // Chest
   { ...createSyncMeta('synced'), id: 'ex-bench-press', name: 'Bench Press', category: 'Push', muscle_group: 'Chest', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-squat', name: 'Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-deadlift', name: 'Deadlift', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-overhead-press', name: 'Shoulder Press', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-incline-db-press', name: 'Incline Dumbbell Press', category: 'Push', muscle_group: 'Chest', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-incline-bench-press', name: 'Incline Barbell Bench Press', category: 'Push', muscle_group: 'Chest', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-flat-db-press', name: 'Flat Dumbbell Press', category: 'Push', muscle_group: 'Chest', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-decline-bench-press', name: 'Decline Bench Press', category: 'Push', muscle_group: 'Chest', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-chest-press-machine', name: 'Machine Chest Press', category: 'Push', muscle_group: 'Chest', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-pec-deck', name: 'Pec Deck / Machine Fly', category: 'Push', muscle_group: 'Chest', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-cable-fly', name: 'Cable Chest Fly', category: 'Push', muscle_group: 'Chest', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-db-fly', name: 'Dumbbell Chest Fly', category: 'Push', muscle_group: 'Chest', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-chest-dips', name: 'Chest Dips (Weighted)', category: 'Push', muscle_group: 'Chest', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-pushups', name: 'Push-Ups', category: 'Push', muscle_group: 'Chest', equipment: 'Bodyweight', is_custom: false, created_by: null },
+
+  // Back
+  { ...createSyncMeta('synced'), id: 'ex-deadlift', name: 'Deadlift', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-lat-pulldown', name: 'Lat Pulldown', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-barbell-row', name: 'Barbell Row', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-bicep-curl', name: 'Bicep Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
-  { ...createSyncMeta('synced'), id: 'ex-tricep-pushdown', name: 'Tricep Pushdown', category: 'Push', muscle_group: 'Triceps', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-pullups', name: 'Pull-Ups / Chin-Ups', category: 'Pull', muscle_group: 'Back', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-seated-cable-row', name: 'Seated Cable Row', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-one-arm-db-row', name: 'One-Arm Dumbbell Row', category: 'Pull', muscle_group: 'Back', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-t-bar-row', name: 'T-Bar Row', category: 'Pull', muscle_group: 'Back', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-chest-supported-row', name: 'Chest-Supported Machine Row', category: 'Pull', muscle_group: 'Back', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-straight-arm-pulldown', name: 'Straight-Arm Cable Pulldown', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-close-grip-pulldown', name: 'Close-Grip Lat Pulldown', category: 'Pull', muscle_group: 'Back', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-shrugs', name: 'Dumbbell / Barbell Shrugs', category: 'Pull', muscle_group: 'Back', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-hyperextension', name: 'Back Extension / Hyperextension', category: 'Pull', muscle_group: 'Back', equipment: 'Bodyweight', is_custom: false, created_by: null },
+
+  // Legs
+  { ...createSyncMeta('synced'), id: 'ex-squat', name: 'Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
   { ...createSyncMeta('synced'), id: 'ex-leg-press', name: 'Leg Press', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-romanian-deadlift', name: 'Romanian Deadlift (RDL)', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-hack-squat', name: 'Hack Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-front-squat', name: 'Front Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-bulgarian-split-squat', name: 'Bulgarian Split Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-walking-lunges', name: 'Dumbbell Lunges', category: 'Legs', muscle_group: 'Legs', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-leg-extension', name: 'Leg Extension', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-lying-leg-curl', name: 'Lying Hamstring Curl', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-seated-leg-curl', name: 'Seated Hamstring Curl', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-hip-thrust', name: 'Barbell Hip Thrust', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-standing-calf-raise', name: 'Standing Calf Raise', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-seated-calf-raise', name: 'Seated Calf Raise', category: 'Legs', muscle_group: 'Legs', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-goblet-squat', name: 'Goblet Squat', category: 'Legs', muscle_group: 'Legs', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-sumo-deadlift', name: 'Sumo Deadlift', category: 'Legs', muscle_group: 'Legs', equipment: 'Barbell', is_custom: false, created_by: null },
+
+  // Shoulders
+  { ...createSyncMeta('synced'), id: 'ex-overhead-press', name: 'Shoulder Press', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-barbell-ohp', name: 'Overhead Barbell Press (OHP)', category: 'Push', muscle_group: 'Shoulders', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-lateral-raise', name: 'Dumbbell Lateral Raise', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-cable-lateral-raise', name: 'Cable Lateral Raise', category: 'Push', muscle_group: 'Shoulders', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-face-pull', name: 'Cable Face Pull', category: 'Pull', muscle_group: 'Shoulders', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-rear-delt-fly', name: 'Rear Delt Reverse Fly', category: 'Pull', muscle_group: 'Shoulders', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-arnold-press', name: 'Arnold Press', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-front-raise', name: 'Dumbbell Front Raise', category: 'Push', muscle_group: 'Shoulders', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-upright-row', name: 'Barbell / Cable Upright Row', category: 'Pull', muscle_group: 'Shoulders', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-machine-shoulder-press', name: 'Machine Shoulder Press', category: 'Push', muscle_group: 'Shoulders', equipment: 'Machine', is_custom: false, created_by: null },
+
+  // Biceps & Forearms
+  { ...createSyncMeta('synced'), id: 'ex-bicep-curl', name: 'Bicep Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-barbell-curl', name: 'Barbell / EZ-Bar Bicep Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-hammer-curl', name: 'Dumbbell Hammer Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-preacher-curl', name: 'Preacher Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Machine', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-incline-db-curl', name: 'Incline Dumbbell Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-cable-bicep-curl', name: 'Cable Bicep Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-concentration-curl', name: 'Concentration Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-reverse-curl', name: 'Reverse Barbell Curl', category: 'Pull', muscle_group: 'Biceps', equipment: 'Barbell', is_custom: false, created_by: null },
+
+  // Triceps
+  { ...createSyncMeta('synced'), id: 'ex-tricep-pushdown', name: 'Tricep Pushdown', category: 'Push', muscle_group: 'Triceps', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-overhead-tricep-ext', name: 'Overhead Cable / DB Tricep Extension', category: 'Push', muscle_group: 'Triceps', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-skull-crushers', name: 'Skull Crushers (EZ-Bar)', category: 'Push', muscle_group: 'Triceps', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-close-grip-bench', name: 'Close-Grip Bench Press', category: 'Push', muscle_group: 'Triceps', equipment: 'Barbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-tricep-dips', name: 'Tricep Bench / Parallel Dips', category: 'Push', muscle_group: 'Triceps', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-single-arm-pushdown', name: 'Single-Arm Cable Tricep Extension', category: 'Push', muscle_group: 'Triceps', equipment: 'Cable', is_custom: false, created_by: null },
+
+  // Core & Conditioning
+  { ...createSyncMeta('synced'), id: 'ex-hanging-leg-raise', name: 'Hanging Leg Raise', category: 'Core', muscle_group: 'Core', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-cable-crunch', name: 'Cable Rope Crunch', category: 'Core', muscle_group: 'Core', equipment: 'Cable', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-ab-wheel', name: 'Ab Wheel Rollout', category: 'Core', muscle_group: 'Core', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-plank', name: 'Weighted Plank', category: 'Core', muscle_group: 'Core', equipment: 'Bodyweight', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-farmers-walk', name: "Farmer's Walk", category: 'Full Body', muscle_group: 'Full Body', equipment: 'Dumbbell', is_custom: false, created_by: null },
+  { ...createSyncMeta('synced'), id: 'ex-sled-push', name: 'Sled Push / Pull', category: 'Full Body', muscle_group: 'Full Body', equipment: 'Machine', is_custom: false, created_by: null },
 ];
 
 export async function ensureSeedData(): Promise<void> {
+  // Always ensure the 65+ built-in exercises exist in IndexedDB
+  await db.exercises.bulkPut(SEED_EXERCISES);
+
   const existingCount = await db.profiles.count();
   if (existingCount >= 4) return;
 
